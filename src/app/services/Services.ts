@@ -8,7 +8,7 @@ import {Observable} from 'rxjs';
 })
 export class Services {
 
-  URL = 'http://localhost:8080';
+  URL = 'http://localhost:8081';
 
   constructor(private http: HttpClient) {
 
@@ -88,6 +88,39 @@ export class Services {
     });
 
     return this.http.post(this.URL + '/' + entity + '/' + 'getByPage', obj, {headers});
+  }
+
+  getFromEntityAndMethod(entity: string, method: string, obj: any): Observable<any> {
+
+    const headers = new HttpHeaders({
+      'Access-Control-Allow-Headers' : 'Content-Type',
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': '*'
+    });
+
+    return this.http.post(this.URL + '/' + entity + '/' + method, obj, {headers});
+  }
+
+  getFromEntityAndMethodString(entity: string, method: string, obj: any): Observable<any> {
+
+    const headers = new HttpHeaders({
+      'Access-Control-Allow-Headers' : 'Content-Type',
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': '*'
+    });
+
+    return this.http.post(this.URL + '/' + entity + '/' + method, obj, {headers: headers, responseType: 'text'});
+  }
+
+  getFromEntityAndMethodPromise(entity: string, method: string, obj: any): Promise<any> {
+
+    const headers = new HttpHeaders({
+      'Access-Control-Allow-Headers' : 'Content-Type',
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': '*'
+    });
+
+    return this.http.post(this.URL + '/' + entity + '/' + method, obj, {headers}).toPromise();
   }
 
 }

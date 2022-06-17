@@ -4,10 +4,10 @@ export class TipoProducto {
   codigo: string;
   descripcion: string;
 
-  constructor(id: number, codigo: string, nombre: string, descripcion: string) {
+  constructor(id: number, nombre: string, codigo: string, descripcion: string) {
     this.id = id;
-    this.codigo = codigo;
     this.nombre = nombre;
+    this.codigo = codigo;
     this.descripcion = descripcion;
   }
 }

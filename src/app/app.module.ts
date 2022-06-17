@@ -11,6 +11,7 @@ import {HttpClientModule} from '@angular/common/http';
 import { ProductosComponent } from './views/productos/productos.component';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import { TipoProductoComponent } from './views/tipo-producto/tipo-producto.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,8 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
     HeaderComponent,
     FooterComponent,
     HomeComponent,
-    ProductosComponent
+    ProductosComponent,
+    TipoProductoComponent
   ],
   imports: [
     BrowserModule,

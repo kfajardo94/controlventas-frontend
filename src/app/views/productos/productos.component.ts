@@ -207,10 +207,12 @@ export class ProductosComponent implements OnInit {
   llenarObjeto(form: any): any{
     const obj = {
       id: form.controls.id.value.toString().trim(),
+      nombre: form.controls.nombre.value.trim(),
+      codigo: form.controls.codigo.value.trim(),
       descripcion: form.controls.descripcion.value.trim(),
-      srcImagen: form.controls.srcImagen.value.trim(),
-      srcVideo: form.controls.srcVideo.value.trim(),
-      fechaCreacion: form.controls.fechaCreacion.value,
+      precio: form.controls.precio.value.trim(),
+      tipoProducto: form.controls.tipoProducto.value,
+      imagen: form.controls.imagen.value
     };
 
     return obj;
@@ -265,5 +267,40 @@ export class ProductosComponent implements OnInit {
     });
     this.getValuesByPage(this.formFiltros.controls.id.value.toString().trim(),
       this.formFiltros.controls.descripcion.value.toString().trim(), 0, this.pagination.pageSize);
+  }
+
+  cargaArchivo(target: any) {
+    const file = target && target.files ? target.files[0] : null;
+
+    if (file) {
+      this.getBase64(file).then(
+        data => {
+          const valor = this.base64ToArrayBuffer(data);
+          console.log('valor: ', valor);
+        }
+      )
+    }
+
+  }
+
+  getBase64(file: any) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = error => reject(error);
+    });
+  }
+
+  base64ToArrayBuffer(base64: any) {
+    let binaryString = atob(base64);
+    let binaryLength = binaryString.length;
+    let bytes = new Uint8Array(binaryLength);
+
+    for (let i = 0; i < binaryLength; i++) {
+      let ascii = binaryString.charCodeAt(i);
+      bytes[i] = ascii;
+    }
+    return bytes;
   }
 }

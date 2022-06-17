@@ -1,7 +1,7 @@
 <div class="divGeneral">
   <div class="divTable">
     <div class="divTitulo">
-      <span>Productos</span>
+      <span>Tipos de producto</span>
     </div>
     <p>
       <button type="button" class="btn btn-dark" (click)="collapse.toggle()" [attr.aria-expanded]="!this.filtroCerrado"
@@ -19,13 +19,13 @@
               <div class="input-group" >
                 <input type="text" class="form-control" maxlength="10" size="10" width="100" formControlName="id" >
               </div>
-              <label>Código</label>
-              <div class="input-group" >
-                <input type="text" class="form-control" maxlength="20" formControlName="codigo">
-              </div>
               <label>Nombre</label>
               <div class="input-group" >
                 <input type="text" class="form-control" maxlength="50" formControlName="nombre">
+              </div>
+              <label>Código</label>
+              <div class="input-group" >
+                <input type="text" class="form-control" maxlength="20" formControlName="codigo">
               </div>
             </div>
           </div>
@@ -51,17 +51,15 @@
             <th scope="col">Código</th>
             <th scope="col">Nombre</th>
             <th scope="col">Descripción</th>
-            <th scope="col">Tipo de producto</th>
             <th scope="col">Acciones</th>
           </tr>
           </thead>
           <tbody>
-          <tr *ngFor="let producto of productos; let i = index;" [class.tdPar]="(i+1) % 2 !== 0" [class.tdImpar]="(i+1) % 2 === 0">
+          <tr *ngFor="let producto of tipoProducto; let i = index;" [class.tdPar]="(i+1) % 2 !== 0" [class.tdImpar]="(i+1) % 2 === 0">
             <td>{{producto.id}}</td>
             <td><span>{{producto.codigo}}</span></td>
             <td><span>{{producto.nombre}}</span></td>
             <td><span>{{producto.descripcion}}</span></td>
-            <td><span>{{producto.tipoProducto.id}}</span></td>
             <td>
               <button (click)="modal(content, 3, producto)"><i class="fas fa-search"></i></button>
               <button (click)="modal(content, 2, producto)"><i class="fas fa-pen"></i></button>
@@ -123,35 +121,21 @@
           </div>
         </div>
 
-        <label>{{(this.modo === 1 || modo === 2) ? 'Nombre' + '*' : 'Nombre' }}</label>
-        <div class="input-group" >
-          <input type="text" class="form-control" formControlName="nombre" (blur)="limpiarControls('nombre')">
-        </div>
-
         <label>{{(this.modo === 1 || modo === 2) ? 'Código' + '*' : 'Código' }}</label>
         <div class="input-group" >
-          <input type="text" class="form-control" formControlName="codigo" (blur)="limpiarControls('codigo')">
+          <input id="inputCodigo" type="text" class="form-control" formControlName="codigo" (blur)="limpiarControls('codigo')" maxlength="20">
+        </div>
+
+        <label>{{(this.modo === 1 || modo === 2) ? 'Nombre' + '*' : 'Nombre' }}</label>
+        <div class="input-group" >
+          <input type="text" class="form-control" formControlName="nombre" (blur)="limpiarControls('nombre')" maxlength="50">
         </div>
 
         <label>{{(this.modo === 1 || modo === 2) ? 'Descripción' + '*' : 'Descripción'}}</label>
         <div class="input-group" >
-          <textarea rows="4" type="text" class="form-control" maxlength="200" formControlName="descripcion" (blur)="limpiarControls('descripcion')"></textarea>
+          <textarea rows="4" type="text" class="form-control" maxlength="300" formControlName="descripcion" (blur)="limpiarControls('descripcion')"></textarea>
         </div>
 
-        <label>{{(this.modo === 1 || modo === 2) ? 'Precio' + '*' : 'Precio' }}</label>
-        <div class="input-group" >
-          <input type="text" class="form-control" formControlName="precio" (blur)="limpiarControls('precio')">
-        </div>
-
-        <label>{{(this.modo === 1 || modo === 2) ? 'Tipo de producto' + '*' : 'Tipo de producto' }}</label>
-        <div class="input-group" >
-          <input type="text" class="form-control" formControlName="tipoProducto" (blur)="limpiarControls('tipoProducto')">
-        </div>
-        <label>{{(this.modo === 1 || modo === 2) ? 'Imagen' + '*' : 'Imagen'}}</label>
-        <div class="input-group" >
-          <input type="file" class="form-control-file" id="imagen" (change)="cargaArchivo($event && $event.target ? $event.target: null)" />
-          <!--<input type="text" class="form-control" formControlName="imagen" >-->
-        </div>
       </div>
     </div>
     <div class="modal-footer divFooter">
@@ -166,7 +150,7 @@
 <!--MODAL ELIMINAR-->
 <ng-template #contentEliminar let-modal>
   <div class="modal-header badge-dark">
-    <h4 class="modal-title" id="modal-basic-title-delete">Eliminar}}</h4>
+    <h4 class="modal-title" id="modal-basic-title-delete">Eliminar</h4>
     <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
       <span aria-hidden="true">&times;</span>
     </button>
@@ -175,7 +159,7 @@
   <form [formGroup]="form" (submit)="eliminar()">
     <div class="modal-body">
       <div class="form-group divMensajeEliminar">
-        <span>Confirmar eliminar el registro: {{this.form.controls.id.value}} - {{this.form.controls.descripcion.value}}</span>
+        <span>Confirmar eliminar el registro: {{this.form.controls.id.value}} - {{this.form.controls.nombre.value}}</span>
       </div>
     </div>
     <div class="modal-footer divFooter">
