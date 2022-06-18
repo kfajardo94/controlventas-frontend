@@ -3,6 +3,7 @@ import {Producto} from '../../bo/Producto';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {Services} from '../../services/Services';
 import {NgbModal, NgbPagination, NgbPaginationConfig} from '@ng-bootstrap/ng-bootstrap';
+import {TipoProducto} from '../../bo/TipoProducto';
 
 @Component({
   selector: 'app-productos',
@@ -12,6 +13,7 @@ import {NgbModal, NgbPagination, NgbPaginationConfig} from '@ng-bootstrap/ng-boo
 export class ProductosComponent implements OnInit {
 
   productos: Producto[];
+  lstTipoProducto: TipoProducto[];
   form = new FormGroup({});
   formFiltros = new FormGroup({});
   formFiltrosBK = new FormGroup({});
@@ -23,10 +25,12 @@ export class ProductosComponent implements OnInit {
   pagination: NgbPagination;
   filtroCerrado: boolean;
   nombreAccion: string;
+  mostrarImagen: boolean;
 
   constructor(private modalService: NgbModal,
               private service: Services) {
     this.productos = [];
+    this.lstTipoProducto = [];
     this.type = '';
     this.mensaje = '';
     this.nombreAccion = '';
@@ -60,13 +64,16 @@ export class ProductosComponent implements OnInit {
     });
 
     this.filtroCerrado = true;
+    this.mostrarImagen = false;
+    this.cargarListas();
   }
 
   ngOnInit(): void {
-    this.getValuesByPage('', '', this.pagination.page, this.pagination.pageSize);
+    this.getValuesByPage('', '', '', this.pagination.page, this.pagination.pageSize);
   }
 
   modal(content: any, modo: number, item: any): void {
+    this.mostrarImagen = false;
     this.modo = modo;
     this.deshabilitarBotones = false;
     this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'}).result.then((result) => {
@@ -74,9 +81,9 @@ export class ProductosComponent implements OnInit {
       }
     );
 
-    const inputDescripcion = document.getElementById('inputDescripcion');
-    if (inputDescripcion) {
-      inputDescripcion.focus();
+    const inputName = document.getElementById('inputName');
+    if (inputName) {
+      inputName.focus();
     }
 
     if (this.modo === 1) {
@@ -91,41 +98,47 @@ export class ProductosComponent implements OnInit {
         imagen: new FormControl('', Validators.required)
       });
     } else if (this.modo === 2) {
+
       this.nombreAccion = 'Editar';
       this.form = new FormGroup({
         id: new FormControl({value: item.id, disabled: true}),
         nombre: new FormControl(item.nombre, Validators.required),
         codigo: new FormControl(item.codigo, Validators.required),
         descripcion: new FormControl(item.descripcion, Validators.required),
-        precio: new FormControl(item.precio, Validators.required),
+        precio: new FormControl(item.precio.toString(), Validators.required),
         tipoProducto: new FormControl(item.tipoProducto.id, Validators.required),
-        imagen: new FormControl(item.imagen, Validators.required)
+        imagen: new FormControl(item.imagenStr, Validators.required)
       });
+
+      this.cargarImagenForm('data:image/jpeg;base64,/9j/' + item.imagenStr);
     } else if (this.modo === 3) {
+
       this.nombreAccion = 'Ver';
       this.form = new FormGroup({
         id: new FormControl({value: item.id, disabled: true}),
-        nombre: new FormControl(item.nombre, Validators.required),
-        codigo: new FormControl(item.codigo, Validators.required),
-        descripcion: new FormControl(item.descripcion, Validators.required),
-        precio: new FormControl(item.precio, Validators.required),
-        tipoProducto: new FormControl(item.tipoProducto.id, Validators.required),
-        imagen: new FormControl(item.imagen, Validators.required)
+        nombre: new FormControl({value: item.nombre, disabled: true}),
+        codigo: new FormControl({value: item.codigo, disabled: true}),
+        descripcion: new FormControl({value: item.descripcion, disabled: true}),
+        precio: new FormControl({value: item.precio, disabled: true}),
+        tipoProducto: new FormControl({value: item.tipoProducto.id, disabled: true}),
+        imagen: new FormControl({value: item.imagenStr, disabled: true})
       });
+      this.cargarImagenForm('data:image/jpeg;base64,/9j/' + item.imagenStr);
     }
+
   }
 
   modalEliminar(contentEliminar: any, item: any): void {
     this.modalService.open(contentEliminar, { size: 'sm' });
     this.deshabilitarBotones = false;
     this.form = new FormGroup({
-      id: new FormControl(''),
-      nombre: new FormControl('', Validators.required),
-      codigo: new FormControl('', Validators.required),
-      descripcion: new FormControl('', Validators.required),
-      precio: new FormControl('', Validators.required),
-      tipoProducto: new FormControl('', Validators.required),
-      imagen: new FormControl('', Validators.required)
+      id: new FormControl(item.id),
+      nombre: new FormControl(item.nombre, Validators.required),
+      codigo: new FormControl(item.codigo, Validators.required),
+      descripcion: new FormControl(item.descripcion, Validators.required),
+      precio: new FormControl(item.precio, Validators.required),
+      tipoProducto: new FormControl(item.tipoProducto.id, Validators.required),
+      imagen: new FormControl(item.imagenStr, Validators.required)
     });
   }
 
@@ -133,7 +146,7 @@ export class ProductosComponent implements OnInit {
     if (this.modo === 1){
       if (this.form && this.form.valid){
         const obj = this.llenarObjeto(this.form);
-        this.service.saveEntity('video', obj).subscribe( res => {
+        this.service.saveEntity('producto', obj).subscribe( res => {
           this.type = 'success';
           this.mensaje = 'Registro creado';
           this.deshabilitarBotones = true;
@@ -143,7 +156,9 @@ export class ProductosComponent implements OnInit {
             this.mostrarMensaje = false;
           } , 1000);
           this.getValuesByPage(this.formFiltrosBK.controls.id.value.toString().trim(),
-            this.formFiltrosBK.controls.descripcion.value.toString().trim(), 0, this.pagination.pageSize);
+            this.formFiltrosBK.controls.nombre.value.toString().trim(),
+            this.formFiltrosBK.controls.codigo.value.toString().trim(),
+            0, this.pagination.pageSize);
         }, error1 => {
           this.type = 'danger';
           this.mensaje = 'Ha ocurrido un error al insertar los datos';
@@ -157,7 +172,7 @@ export class ProductosComponent implements OnInit {
     } else if (this.modo === 2){
       if (this.form && this.form.valid){
         const obj = this.llenarObjeto(this.form);
-        this.service.editEntity('video', obj).subscribe( res => {
+        this.service.editEntity('producto', obj).subscribe( res => {
           this.type = 'success';
           this.mensaje = 'Registro modificado';
           this.deshabilitarBotones = true;
@@ -167,7 +182,9 @@ export class ProductosComponent implements OnInit {
             this.mostrarMensaje = false;
           } , 1000);
           this.getValuesByPage(this.formFiltrosBK.controls.id.value.toString().trim(),
-            this.formFiltrosBK.controls.descripcion.value.toString().trim(), 0, this.pagination.pageSize);
+            this.formFiltrosBK.controls.nombre.value.toString().trim(),
+            this.formFiltrosBK.controls.codigo.value.toString().trim(),
+            0, this.pagination.pageSize);
         }, error1 => {
           this.type = 'danger';
           this.mensaje = 'Ha ocurrido un error al actualizar los datos';
@@ -182,7 +199,7 @@ export class ProductosComponent implements OnInit {
   }
 
   eliminar(): void {
-    this.service.deleteEntity('video', this.form.controls.id.value).subscribe(res => {
+    this.service.deleteEntity('producto', this.form.controls.id.value).subscribe(res => {
       this.type = 'success';
       this.mensaje = 'Registro eliminado';
       this.deshabilitarBotones = true;
@@ -192,7 +209,9 @@ export class ProductosComponent implements OnInit {
         this.mostrarMensaje = false;
       } , 1000);
       this.getValuesByPage(this.formFiltrosBK.controls.id.value.toString().trim(),
-        this.formFiltrosBK.controls.descripcion.value.toString().trim(), 0, this.pagination.pageSize);
+        this.formFiltrosBK.controls.nombre.value.toString().trim(),
+        this.formFiltrosBK.controls.codigo.value.toString().trim(),
+        0, this.pagination.pageSize);
     }, error => {
       this.type = 'danger';
       this.mensaje = 'Ha ocurrido un error al eliminar el registro';
@@ -205,14 +224,21 @@ export class ProductosComponent implements OnInit {
   }
 
   llenarObjeto(form: any): any{
+
+    let tipoProducto: any = null;
+
+    if (this.lstTipoProducto) {
+      tipoProducto = this.lstTipoProducto.find(x => x.id === Number(form.controls.tipoProducto.value.toString()));
+    }
+
     const obj = {
       id: form.controls.id.value.toString().trim(),
       nombre: form.controls.nombre.value.trim(),
       codigo: form.controls.codigo.value.trim(),
       descripcion: form.controls.descripcion.value.trim(),
       precio: form.controls.precio.value.trim(),
-      tipoProducto: form.controls.tipoProducto.value,
-      imagen: form.controls.imagen.value
+      tipoProducto: tipoProducto,
+      imagenStr: form.controls.imagen.value
     };
 
     return obj;
@@ -222,15 +248,15 @@ export class ProductosComponent implements OnInit {
     this.form.controls[campo].setValue(this.form.controls[campo].value.trim());
   }
 
-  getValuesByPage(idValue: any, descripcionValue: string, pageValue: any, sizeValue: any): void{
+  getValuesByPage(idValue: any, nombreValue: string, codigoValue: string, pageValue: any, sizeValue: any): void{
     this.pagination.page = pageValue + 1;
     const obj = {
-      video: {id: idValue, descripcion: descripcionValue},
+      producto: {id: idValue, nombre: nombreValue, codigo: codigoValue},
       page: pageValue,
       size: sizeValue
     };
 
-    this.service.getFromEntityByPage('video', obj).subscribe( res => {
+    this.service.getFromEntityByPage('producto', obj).subscribe( res => {
       this.productos = res.content;
       this.pagination.collectionSize = res  .totalElements;
     }, error1 => {
@@ -241,13 +267,17 @@ export class ProductosComponent implements OnInit {
   changePage(event: any): void {
     this.pagination.page = event;
     this.getValuesByPage(this.formFiltrosBK.controls.id.value.toString().trim(),
-      this.formFiltrosBK.controls.descripcion.value.toString().trim(), this.pagination.page, this.pagination.pageSize);
+      this.formFiltrosBK.controls.nombre.value.toString().trim(),
+      this.formFiltrosBK.controls.codigo.value.toString().trim(),
+      this.pagination.page, this.pagination.pageSize);
   }
 
   changeSize(size: any): void {
     this.pagination.pageSize = size;
     this.getValuesByPage(this.formFiltrosBK.controls.id.value.toString().trim(),
-      this.formFiltrosBK.controls.descripcion.value.toString().trim(), 0, this.pagination.pageSize);
+      this.formFiltrosBK.controls.nombre.value.toString().trim(),
+      this.formFiltrosBK.controls.codigo.value.toString().trim(),
+      0, this.pagination.pageSize);
   }
 
   limpiarFiltros(): void {
@@ -266,17 +296,20 @@ export class ProductosComponent implements OnInit {
       nombre: new FormControl({value: this.formFiltros.controls.nombre.value.toString().trim(), disabled: true})
     });
     this.getValuesByPage(this.formFiltros.controls.id.value.toString().trim(),
-      this.formFiltros.controls.descripcion.value.toString().trim(), 0, this.pagination.pageSize);
+      this.formFiltrosBK.controls.nombre.value.toString().trim(),
+      this.formFiltrosBK.controls.codigo.value.toString().trim(),
+      0, this.pagination.pageSize);
   }
 
-  cargaArchivo(target: any) {
+  cargaArchivo(target: any, event: any) {
     const file = target && target.files ? target.files[0] : null;
 
     if (file) {
+      this.mostrarImagen = true;
       this.getBase64(file).then(
         data => {
-          const valor = this.base64ToArrayBuffer(data);
-          console.log('valor: ', valor);
+          const arrayImage: any = data;
+          this.cargarImagenForm(arrayImage);
         }
       )
     }
@@ -287,7 +320,9 @@ export class ProductosComponent implements OnInit {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result);
+      reader.onload = () => {
+        resolve(reader.result);
+      }
       reader.onerror = error => reject(error);
     });
   }
@@ -303,4 +338,23 @@ export class ProductosComponent implements OnInit {
     }
     return bytes;
   }
+
+  cargarListas() {
+    this.service.getAllItemsFromEntity('tipoProducto').subscribe( res=> {
+      this.lstTipoProducto = res as TipoProducto[];
+    });
+  }
+
+  cargarImagenForm(arrayImage: any){
+
+    let arrayBase64 = arrayImage.split('base64,')[1].substring(4);
+    this.form.controls.imagen.setValue(arrayBase64);
+
+    this.mostrarImagen = true;
+    setTimeout(() => {
+      let obj:HTMLElement = document.getElementById('imagenProducto');
+      obj.setAttribute('src', 'data:image/jpeg;base64,/9j/' + arrayBase64);
+    } , 0);
+  }
+
 }
