@@ -12,6 +12,7 @@ import { ProductosComponent } from './views/productos/productos.component';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { TipoProductoComponent } from './views/tipo-producto/tipo-producto.component';
+import {DecimalPipe} from '@angular/common';
 
 @NgModule({
   declarations: [
@@ -31,7 +32,7 @@ import { TipoProductoComponent } from './views/tipo-producto/tipo-producto.compo
     FormsModule,
     ReactiveFormsModule
   ],
-  providers: [],
+  providers: [DecimalPipe],
   bootstrap: [AppComponent]
 })
 export class AppModule {

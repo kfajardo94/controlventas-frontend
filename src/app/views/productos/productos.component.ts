@@ -4,6 +4,7 @@ import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {Services} from '../../services/Services';
 import {NgbModal, NgbPagination, NgbPaginationConfig} from '@ng-bootstrap/ng-bootstrap';
 import {TipoProducto} from '../../bo/TipoProducto';
+import {DecimalPipe} from '@angular/common';
 
 @Component({
   selector: 'app-productos',
@@ -26,9 +27,10 @@ export class ProductosComponent implements OnInit {
   filtroCerrado: boolean;
   nombreAccion: string;
   mostrarImagen: boolean;
+  formatoPrecio = '1.2-2';
 
   constructor(private modalService: NgbModal,
-              private service: Services) {
+              private service: Services, private decimalPipe: DecimalPipe) {
     this.productos = [];
     this.lstTipoProducto = [];
     this.type = '';
@@ -105,12 +107,12 @@ export class ProductosComponent implements OnInit {
         nombre: new FormControl(item.nombre, Validators.required),
         codigo: new FormControl(item.codigo, Validators.required),
         descripcion: new FormControl(item.descripcion, Validators.required),
-        precio: new FormControl(item.precio.toString(), Validators.required),
+        precio: new FormControl(this.decimalPipe.transform(item.precio.toString(), this.formatoPrecio), Validators.required),
         tipoProducto: new FormControl(item.tipoProducto.id, Validators.required),
         imagen: new FormControl(item.imagenStr, Validators.required)
       });
 
-      this.cargarImagenForm('data:image/jpeg;base64,/9j/' + item.imagenStr);
+      this.cargarImagenForm(item.imagenStr);
     } else if (this.modo === 3) {
 
       this.nombreAccion = 'Ver';
@@ -119,11 +121,11 @@ export class ProductosComponent implements OnInit {
         nombre: new FormControl({value: item.nombre, disabled: true}),
         codigo: new FormControl({value: item.codigo, disabled: true}),
         descripcion: new FormControl({value: item.descripcion, disabled: true}),
-        precio: new FormControl({value: item.precio, disabled: true}),
+        precio: new FormControl({value: this.decimalPipe.transform(item.precio.toString(), this.formatoPrecio), disabled: true}),
         tipoProducto: new FormControl({value: item.tipoProducto.id, disabled: true}),
         imagen: new FormControl({value: item.imagenStr, disabled: true})
       });
-      this.cargarImagenForm('data:image/jpeg;base64,/9j/' + item.imagenStr);
+      this.cargarImagenForm( item.imagenStr);
     }
 
   }
@@ -348,12 +350,12 @@ export class ProductosComponent implements OnInit {
   cargarImagenForm(arrayImage: any){
 
     let arrayBase64 = arrayImage.split('base64,')[1].substring(4);
-    this.form.controls.imagen.setValue(arrayBase64);
+    this.form.controls.imagen.setValue(arrayImage);
 
     this.mostrarImagen = true;
     setTimeout(() => {
       let obj:HTMLElement = document.getElementById('imagenProducto');
-      obj.setAttribute('src', 'data:image/jpeg;base64,/9j/' + arrayBase64);
+      obj.setAttribute('src', arrayImage);
     } , 0);
   }
 

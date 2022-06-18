@@ -52,6 +52,8 @@
             <th scope="col">Nombre</th>
             <th scope="col">Descripción</th>
             <th scope="col">Tipo de producto</th>
+            <th scope="col">Precio</th>
+            <th scope="col"></th>
             <th scope="col">Acciones</th>
           </tr>
           </thead>
@@ -61,7 +63,9 @@
             <td><span>{{producto.codigo}}</span></td>
             <td><span>{{producto.nombre}}</span></td>
             <td><span>{{producto.descripcion}}</span></td>
-            <td><span>{{producto.tipoProducto.id}}</span></td>
+            <td><span>{{producto.tipoProducto.nombre}}</span></td>
+            <td><span>{{'Q ' + (producto.precio | number : '1.2-2')}}</span></td>
+            <td><img width="200" height="150" style="background: white" src="{{producto.imagenStr}}"></td>
             <td>
               <button (click)="modal(content, 3, producto)"><i class="fas fa-search"></i></button>
               <button (click)="modal(content, 2, producto)"><i class="fas fa-pen"></i></button>
