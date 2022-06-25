@@ -51,7 +51,7 @@
             <th scope="col">Código</th>
             <th scope="col">Nombre</th>
             <th scope="col">Descripción</th>
-            <th scope="col">Tipo de producto</th>
+            <th scope="col">Tipo de Producto</th>
             <th scope="col">Precio</th>
             <th scope="col"></th>
             <th scope="col">Acciones</th>
@@ -147,7 +147,7 @@
           <input type="text" class="form-control" formControlName="precio" (blur)="limpiarControls('precio')">
         </div>
 
-        <label>{{(this.modo === 1 || modo === 2) ? 'Tipo de producto' + '*' : 'Tipo de producto' }}</label>
+        <label>{{(this.modo === 1 || modo === 2) ? 'Tipo de Producto' + '*' : 'Tipo de Producto' }}</label>
         <div class="input-group" >
           <select class="form-control" aria-label="Default select example" formControlName="tipoProducto">
             <option *ngFor="let tipoProducto of lstTipoProducto" [value]="tipoProducto.id">{{tipoProducto.nombre}}</option>
