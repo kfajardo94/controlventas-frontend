@@ -1,0 +1,176 @@
+<div class="divGeneral">
+  <div class="divTable">
+    <div class="divTitulo">
+      <span>Stock</span>
+    </div>
+    <p>
+      <button type="button" class="btn btn-dark" (click)="collapse.toggle()" [attr.aria-expanded]="!this.filtroCerrado"
+              aria-controls="collapseExample">
+        Filtros
+      </button>
+    </p>
+    <!--FILTROS-->
+    <div #collapse="ngbCollapse" [(ngbCollapse)]="this.filtroCerrado">
+      <div class="text-white">
+        <form [formGroup]="formFiltros" (submit)="filtrar(collapse)">
+          <div class="modal-body">
+            <div class="form-group col-sm-6" style="margin: 0 auto;">
+              <label>Id</label>
+              <div class="input-group" >
+                <input type="text" class="form-control" maxlength="10" size="10" width="100" formControlName="id" >
+              </div>
+              <label>Producto</label>
+              <div class="input-group" >
+                <input type="text" class="form-control" maxlength="50" formControlName="nombre">
+              </div>
+              <label>Fecha Inicio</label>
+              <div class="input-group" >
+                <input type="text" class="form-control" maxlength="20" formControlName="codigo">
+              </div>
+              <label>Fecha Fin</label>
+              <div class="input-group" >
+                <input type="text" class="form-control" maxlength="20" formControlName="codigo">
+              </div>
+            </div>
+          </div>
+          <div class="divFooter">
+            <div style="float: right; right: 50%; position: relative;">
+              <div style="float: right; right: -50%; position: relative;">
+                <button type="submit" class="btn btn-light" ><i class="fas fa-search"></i></button>
+                <button type="button" (click)="limpiarFiltros()" class="btn btn-danger" ><i class="fas fa-times"></i></button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div>
+      <button class="btn botonAgregarGeneral" (click)="modal(content, 1, null)"><i class="fas fa-file"></i></button>
+      <!--GRID PRINCIPAL-->
+      <div class="divTableCustom">
+        <table class="table table-striped">
+          <thead>
+          <tr>
+            <th scope="col">Id</th>
+            <th scope="col">Producto</th>
+            <th scope="col">Cantidad</th>
+            <th scope="col">Precio</th>
+            <th scope="col">Fecha</th>
+            <th scope="col">Acciones</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let producto of stock; let i = index;" [class.tdPar]="(i+1) % 2 !== 0" [class.tdImpar]="(i+1) % 2 === 0">
+            <td>{{producto.id}}</td>
+            <td><span>{{producto.producto.nombre}}</span></td>
+            <td><span>{{producto.cantidad}}</span></td>
+            <td><span>{{producto.precioCompra}}</span></td>
+            <td><span>{{producto.fecha}}</span></td>
+            <td>
+              <button (click)="modal(content, 3, producto)"><i class="fas fa-search"></i></button>
+              <button (click)="modal(content, 2, producto)"><i class="fas fa-pen"></i></button>
+              <button (click)="modalEliminar(contentEliminar, producto)"><i class="fas fa-trash"></i></button>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="divPagination1" *ngIf="pagination.collectionSize > 0">
+      <div class="divPagination2">
+        <ngb-pagination class="ngbPaginationClass"
+                        [(page)]="pagination.page"
+                        (pageChange)="changePage($event-1)"
+                        [maxSize]="pagination.maxSize"
+                        [pageSize]="pagination.pageSize"
+                        [collectionSize]="pagination.collectionSize"></ngb-pagination>
+      </div>
+    </div>
+    <div class="divPagination3">
+      <div class="divPagination4">
+        <span>Registros por página: {{pagination.pageSize}}  </span>
+        <div ngbDropdown placement="top-left" class="d-inline-block">
+          <button class="btn btn-dark" id="dropdownBasic1" ngbDropdownToggle>
+          </button>
+          <div ngbDropdownMenu class="bg-dark divPageSize" aria-labelledby="dropdownBasic1">
+            <button ngbDropdownItem class="text-white text-center" (click)="changeSize(5)">5</button>
+            <button ngbDropdownItem class="text-white text-center" (click)="changeSize(10)">10</button>
+            <button ngbDropdownItem class="text-white text-center" (click)="changeSize(20)">20</button>
+            <button ngbDropdownItem class="text-white text-center" (click)="changeSize(50)">50</button>
+            <button ngbDropdownItem class="text-white text-center" (click)="changeSize(100)">100</button>
+          </div>
+        </div>
+        <span>Total de registros: {{pagination.collectionSize}}</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!--MODAL FORM ALTA, EDITAR, VER-->
+<ng-template #content let-modal>
+  <div class="modal-header badge-dark">
+    <h4 class="modal-title" id="modal-basic-title">{{nombreAccion}}</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <ngb-alert type="{{type}}" *ngIf="mostrarMensaje" [dismissible]="false">{{mensaje}}</ngb-alert>
+  <form [formGroup]="form" (submit)="guardar()">
+    <div class="modal-body">
+      <div class="form-group">
+        <div *ngIf="this.modo !== 1">
+          <label>Id</label>
+          <div class="input-group" >
+            <input type="text" class="form-control" maxlength="10" formControlName="id" >
+          </div>
+        </div>
+
+        <label>{{(this.modo === 1 || modo === 2) ? 'Código' + '*' : 'Código' }}</label>
+        <div class="input-group" >
+          <input id="inputCodigo" type="text" class="form-control" formControlName="codigo" (blur)="limpiarControls('codigo')" maxlength="20">
+        </div>
+
+        <label>{{(this.modo === 1 || modo === 2) ? 'Nombre' + '*' : 'Nombre' }}</label>
+        <div class="input-group" >
+          <input type="text" class="form-control" formControlName="nombre" (blur)="limpiarControls('nombre')" maxlength="50">
+        </div>
+
+        <label>{{(this.modo === 1 || modo === 2) ? 'Descripción' + '*' : 'Descripción'}}</label>
+        <div class="input-group" >
+          <textarea rows="4" type="text" class="form-control" maxlength="300" formControlName="descripcion" (blur)="limpiarControls('descripcion')"></textarea>
+        </div>
+
+      </div>
+    </div>
+    <div class="modal-footer divFooter">
+      <button type="button" (click)="modal.close()" class="btn btn-danger" [disabled]="deshabilitarBotones"><i class="fas fa-times"></i></button>
+      <button type="submit" class="btn btn-success" [disabled]="this.form.invalid || deshabilitarBotones" *ngIf="modo !== 3 && modo !== 4"><i class="fas fa-check"></i></button>
+    </div>
+  </form>
+
+</ng-template>
+
+<!--MODAL ELIMINAR-->
+<ng-template #contentEliminar let-modal>
+  <div class="modal-header badge-dark">
+    <h4 class="modal-title" id="modal-basic-title-delete">Eliminar</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <ngb-alert type="{{type}}" *ngIf="mostrarMensaje" [dismissible]="false">{{mensaje}}</ngb-alert>
+  <form [formGroup]="form" (submit)="eliminar()">
+    <div class="modal-body">
+      <div class="form-group divMensajeEliminar">
+        <span>Confirmar eliminar el registro: {{this.form.controls.id.value}}</span>
+      </div>
+    </div>
+    <div class="modal-footer divFooter">
+      <button type="button" (click)="modal.close()" class="btn btn-danger" [disabled]="deshabilitarBotones"><i class="fas fa-times"></i></button>
+      <button type="submit" class="btn btn-success" [disabled]="deshabilitarBotones"><i class="fas fa-check"></i></button>
+    </div>
+  </form>
+
+</ng-template>

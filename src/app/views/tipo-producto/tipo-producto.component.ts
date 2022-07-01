@@ -122,10 +122,9 @@ export class TipoProductoComponent implements OnInit {
       },
       page: 0,
       size: 0
-    }
+    };
     this.service.getFromEntityAndMethodString('tipoProducto', 'getValidadorUniques', request).subscribe(
       res => {
-        console.log('entra: ', res);
         if (!res) {
           if (this.modo === 1){
             if (this.form && this.form.valid){
@@ -180,14 +179,13 @@ export class TipoProductoComponent implements OnInit {
             }
           }
         } else {
-          console.log('entra a else: ', res);
           this.type = 'danger';
           this.mensaje = res;
-          this.mostrarMensaje = true;
           setTimeout(() => {
             this.mostrarMensaje = false;
           } , 1500);
-          console.error('Error al consumir servicio');
+          console.error('Error al consumir servicio');this.mostrarMensaje = true;
+
         }
       }, error =>{
         console.error(error);
