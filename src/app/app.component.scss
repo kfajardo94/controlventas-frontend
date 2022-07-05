@@ -1,0 +1,39 @@
+.list {
+  width: 100%;
+  grid-template-columns: 10% 90%;
+  display: grid;
+  position: fixed;
+}
+
+.div1{
+  overflow-y: auto;
+  height: 90vh;
+  background: gray;
+
+}
+
+.div1 a{
+  color: white;
+  font-family: Verdana;
+}
+
+.div2{
+  text-align: center;
+}
+
+.div2 a:hover{
+  background: #303030;
+}
+
+.list ul{
+  list-style: none;
+}
+
+.list ul{
+  width: 100%;
+  padding-top: 2%;
+  padding-bottom: 2%;
+}
+.list ul:hover{
+  background: #303030;
+}
