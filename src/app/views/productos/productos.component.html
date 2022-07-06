@@ -157,8 +157,8 @@
         </div>
         <label>{{(this.modo === 1 || modo === 2) ? 'Fecha de Vencimiento' + '*' : 'Fecha de Vencimiento' }}</label>
         <div class="input-group" >
-          <input *ngIf="modo !== 3" type="text" class="form-control input-date" formControlName="fVencimiento" disabled>
-          <input *ngIf="modo === 3" type="text" class="form-control" formControlName="fVencimiento" disabled>
+          <input *ngIf="modo !== 3" type="text" class="form-control input-date" formControlName="fVencimiento">
+          <input *ngIf="modo === 3" type="text" class="form-control" formControlName="fVencimiento">
           <button *ngIf="modo !== 3" class="btn-calendar" type="button" (click)="modalDatePicker(contentDatePicker)" >
             <i class="fa fa-calendar-alt"></i>
           </button>
@@ -172,7 +172,7 @@
     </div>
     <div class="modal-footer divFooter">
       <button type="button" (click)="modal.close()" class="btn btn-danger" [disabled]="deshabilitarBotones"><i class="fas fa-times"></i></button>
-      <button type="submit" class="btn btn-success" [disabled]="this.form.invalid || deshabilitarBotones" *ngIf="modo !== 3 && modo !== 4"><i class="fas fa-check"></i></button>
+      <button type="submit" class="btn btn-success" [disabled]="this.form.invalid || deshabilitarBotones || (this.form.controls['fVencimiento'].value ==='')" *ngIf="modo !== 3 && modo !== 4"><i class="fas fa-check"></i></button>
     </div>
   </form>
 

@@ -100,7 +100,7 @@ export class ProductosComponent implements OnInit {
         precio: new FormControl('', Validators.required),
         tipoProducto: new FormControl('', Validators.required),
         imagen: new FormControl('', Validators.required),
-        fVencimiento: new FormControl('', Validators.required)
+        fVencimiento: new FormControl({value: '', disabled: true}, Validators.required)
       });
     } else if (this.modo === 2) {
 
@@ -113,7 +113,7 @@ export class ProductosComponent implements OnInit {
         precio: new FormControl(this.decimalPipe.transform(item.precio.toString(), this.formatoPrecio), Validators.required),
         tipoProducto: new FormControl(item.tipoProducto.id, Validators.required),
         imagen: new FormControl(item.imagenStr, Validators.required),
-        fVencimiento: new FormControl(this.datePipe.transform(item.fechaVencimiento, 'dd/MM/yyyy'), Validators.required)
+        fVencimiento: new FormControl({value: this.datePipe.transform(item.fechaVencimiento, 'dd/MM/yyyy'), disabled: true}, Validators.required)
       });
 
       this.cargarImagenForm(item.imagenStr);
@@ -146,7 +146,7 @@ export class ProductosComponent implements OnInit {
       precio: new FormControl(item.precio, Validators.required),
       tipoProducto: new FormControl(item.tipoProducto.id, Validators.required),
       imagen: new FormControl(item.imagenStr, Validators.required),
-      fVencimiento: new FormControl(this.datePipe.transform(item.fechaVencimiento, 'dd/MM/yyyy'), Validators.required)
+      fVencimiento: new FormControl({value: this.datePipe.transform(item.fechaVencimiento, 'dd/MM/yyyy'), disabled: true}, Validators.required)
     });
   }
 
