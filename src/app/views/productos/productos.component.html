@@ -157,8 +157,11 @@
         </div>
         <label>{{(this.modo === 1 || modo === 2) ? 'Fecha de Vencimiento' + '*' : 'Fecha de Vencimiento' }}</label>
         <div class="input-group" >
-          <input type="text" class="form-control" formControlName="fVencimiento" disabled>
-          <input (click)="modalDatePicker(contentDatePicker)" type="button">
+          <input *ngIf="modo !== 3" type="text" class="form-control input-date" formControlName="fVencimiento" disabled>
+          <input *ngIf="modo === 3" type="text" class="form-control" formControlName="fVencimiento" disabled>
+          <button *ngIf="modo !== 3" class="btn-calendar" type="button" (click)="modalDatePicker(contentDatePicker)" >
+            <i class="fa fa-calendar-alt"></i>
+          </button>
         </div>
         <label>{{(this.modo === 1 || modo === 2) ? 'Imagen' + '*' : 'Imagen'}}</label>
         <div class="input-group" >
@@ -188,7 +191,7 @@
   <form [formGroup]="form" (submit)="eliminar()">
     <div class="modal-body">
       <div class="form-group divMensajeEliminar">
-        <span>Confirmar eliminar el registro: {{this.form.controls.id.value}} - {{this.form.controls.descripcion.value}}</span>
+        <span>Confirmar eliminar el registro: {{this.form.controls.id.value}} - {{this.form.controls.nombre.value}}</span>
       </div>
     </div>
     <div class="modal-footer divFooter">

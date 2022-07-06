@@ -7,7 +7,7 @@
 
 //sección table
 .divTable{
-  width: 70%;
+  width: 95%;
   margin: 0 auto;
   padding-top: 50px;
 }
@@ -188,4 +188,22 @@
   position: relative;
   top: 30%;
   transform: translateY(-10%);
+}
+
+.btn-calendar{
+  border: none;
+  margin-top: 2px;
+  margin-bottom: 2px;
+  z-index: 1;
+  margin-left: -50px;
+}
+
+.btn-calendar:hover{
+  background: silver;
+}
+
+.input-date:disabled{
+  margin-right: 22px;
+  background-color: #fff;
+  color: #495057;
 }
