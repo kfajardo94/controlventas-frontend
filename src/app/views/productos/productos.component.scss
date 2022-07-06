@@ -7,7 +7,7 @@
 
 //sección table
 .divTable{
-  width: 60%;
+  width: 70%;
   margin: 0 auto;
   padding-top: 50px;
 }
@@ -176,4 +176,16 @@
 .divFooter button{
   width: 50px;
   height: 40px;
+}
+
+
+.table td  {
+  vertical-align: middle;
+}
+
+::ng-deep .modalPersonalizado .modal-dialog {
+  width: 237px;
+  position: relative;
+  top: 30%;
+  transform: translateY(-10%);
 }

@@ -53,6 +53,7 @@
             <th scope="col">Descripción</th>
             <th scope="col">Tipo de Producto</th>
             <th scope="col">Precio</th>
+            <th scope="col">Fecha de Vencimiento</th>
             <th scope="col"></th>
             <th scope="col">Acciones</th>
           </tr>
@@ -65,6 +66,7 @@
             <td><span>{{producto.descripcion}}</span></td>
             <td><span>{{producto.tipoProducto.nombre}}</span></td>
             <td><span>{{'Q ' + (producto.precio | number : '1.2-2')}}</span></td>
+            <td><span>{{(producto.fechaVencimiento | date : 'dd/MM/yyyy')}}</span></td>
             <td><img width="200" height="150" style="background: white" src="{{producto.imagenStr}}"></td>
             <td>
               <button (click)="modal(content, 3, producto)"><i class="fas fa-search"></i></button>
@@ -144,7 +146,7 @@
 
         <label>{{(this.modo === 1 || modo === 2) ? 'Precio' + '*' : 'Precio' }}</label>
         <div class="input-group" >
-          <input type="text" class="form-control" formControlName="precio" (blur)="limpiarControls('precio')">
+          <input type="text" class="form-control" formControlName="precio" (blur)="removeLettersDecimals('precio', 12, 2, form)" >
         </div>
 
         <label>{{(this.modo === 1 || modo === 2) ? 'Tipo de Producto' + '*' : 'Tipo de Producto' }}</label>
@@ -153,11 +155,15 @@
             <option *ngFor="let tipoProducto of lstTipoProducto" [value]="tipoProducto.id">{{tipoProducto.nombre}}</option>
           </select>
         </div>
+        <label>{{(this.modo === 1 || modo === 2) ? 'Fecha de Vencimiento' + '*' : 'Fecha de Vencimiento' }}</label>
+        <div class="input-group" >
+          <input type="text" class="form-control" formControlName="fVencimiento" disabled>
+          <input (click)="modalDatePicker(contentDatePicker)" type="button">
+        </div>
         <label>{{(this.modo === 1 || modo === 2) ? 'Imagen' + '*' : 'Imagen'}}</label>
         <div class="input-group" >
           <input *ngIf="modo !== 3" type="file" class="form-control-file" id="imagen" (change)="cargaArchivo($event && $event.target ? $event.target: null, $event)" />
           <img *ngIf="mostrarImagen" id="imagenProducto"  width="450" height="250" >
-          <!--<input type="text" class="form-control" formControlName="imagen" >-->
         </div>
       </div>
     </div>
@@ -191,4 +197,12 @@
     </div>
   </form>
 
+</ng-template>
+
+<ng-template #contentDatePicker let-modal>
+  <div style="margin: 0 auto;">
+    <form [formGroup]="form">
+      <ngb-datepicker #d (dateSelect)="onDateSelect($event, 'fVencimiento', form)"></ngb-datepicker>
+    </form>
+  </div>
 </ng-template>

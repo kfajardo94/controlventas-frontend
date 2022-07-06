@@ -1,10 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, HostListener, OnInit} from '@angular/core';
 import {Producto} from '../../bo/Producto';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {Services} from '../../services/Services';
-import {NgbModal, NgbPagination, NgbPaginationConfig} from '@ng-bootstrap/ng-bootstrap';
+import {NgbDate, NgbModal, NgbModalRef, NgbPagination, NgbPaginationConfig} from '@ng-bootstrap/ng-bootstrap';
 import {TipoProducto} from '../../bo/TipoProducto';
-import {DecimalPipe} from '@angular/common';
+import {DatePipe, DecimalPipe} from '@angular/common';
 
 @Component({
   selector: 'app-productos',
@@ -28,9 +28,10 @@ export class ProductosComponent implements OnInit {
   nombreAccion: string;
   mostrarImagen: boolean;
   formatoPrecio = '1.2-2';
+  modalDataPicker: any;
 
   constructor(private modalService: NgbModal,
-              private service: Services, private decimalPipe: DecimalPipe) {
+              private service: Services, private decimalPipe: DecimalPipe, private datePipe: DatePipe) {
     this.productos = [];
     this.lstTipoProducto = [];
     this.type = '';
@@ -50,7 +51,8 @@ export class ProductosComponent implements OnInit {
       descripcion: new FormControl('', Validators.required),
       precio: new FormControl('', Validators.required),
       tipoProducto: new FormControl('', Validators.required),
-      imagen: new FormControl('', Validators.required)
+      imagen: new FormControl('', Validators.required),
+      fVencimiento: new FormControl('', Validators.required)
     });
 
     this.formFiltros = new FormGroup({
@@ -97,7 +99,8 @@ export class ProductosComponent implements OnInit {
         descripcion: new FormControl('', Validators.required),
         precio: new FormControl('', Validators.required),
         tipoProducto: new FormControl('', Validators.required),
-        imagen: new FormControl('', Validators.required)
+        imagen: new FormControl('', Validators.required),
+        fVencimiento: new FormControl('', Validators.required)
       });
     } else if (this.modo === 2) {
 
@@ -109,7 +112,8 @@ export class ProductosComponent implements OnInit {
         descripcion: new FormControl(item.descripcion, Validators.required),
         precio: new FormControl(this.decimalPipe.transform(item.precio.toString(), this.formatoPrecio), Validators.required),
         tipoProducto: new FormControl(item.tipoProducto.id, Validators.required),
-        imagen: new FormControl(item.imagenStr, Validators.required)
+        imagen: new FormControl(item.imagenStr, Validators.required),
+        fVencimiento: new FormControl(this.datePipe.transform(item.fechaVencimiento, 'dd/MM/yyyy'), Validators.required)
       });
 
       this.cargarImagenForm(item.imagenStr);
@@ -123,7 +127,8 @@ export class ProductosComponent implements OnInit {
         descripcion: new FormControl({value: item.descripcion, disabled: true}),
         precio: new FormControl({value: this.decimalPipe.transform(item.precio.toString(), this.formatoPrecio), disabled: true}),
         tipoProducto: new FormControl({value: item.tipoProducto.id, disabled: true}),
-        imagen: new FormControl({value: item.imagenStr, disabled: true})
+        imagen: new FormControl({value: item.imagenStr, disabled: true}),
+        fVencimiento: new FormControl({value: this.datePipe.transform(item.fechaVencimiento, 'dd/MM/yyyy'), disabled: true})
       });
       this.cargarImagenForm( item.imagenStr);
     }
@@ -140,7 +145,8 @@ export class ProductosComponent implements OnInit {
       descripcion: new FormControl(item.descripcion, Validators.required),
       precio: new FormControl(item.precio, Validators.required),
       tipoProducto: new FormControl(item.tipoProducto.id, Validators.required),
-      imagen: new FormControl(item.imagenStr, Validators.required)
+      imagen: new FormControl(item.imagenStr, Validators.required),
+      fVencimiento: new FormControl(this.datePipe.transform(item.fechaVencimiento, 'dd/MM/yyyy'), Validators.required)
     });
   }
 
@@ -259,14 +265,26 @@ export class ProductosComponent implements OnInit {
       tipoProducto = this.lstTipoProducto.find(x => x.id === Number(form.controls.tipoProducto.value.toString()));
     }
 
+    const fechaArray: [] = form.controls.fVencimiento.value.toString().split('/');
+
+    let nuevaFechaString = '';
+
+    fechaArray.slice().reverse().forEach(x =>
+      nuevaFechaString += x + '-'
+    );
+
+    nuevaFechaString = nuevaFechaString.substr(0, nuevaFechaString.length -1);
+    const fecha = new Date(nuevaFechaString);
+
     const obj = {
       id: form.controls.id.value.toString().trim(),
       nombre: form.controls.nombre.value.trim(),
       codigo: form.controls.codigo.value.trim(),
       descripcion: form.controls.descripcion.value.trim(),
-      precio: form.controls.precio.value.trim(),
+      precio: form.controls.precio.value,
       tipoProducto: tipoProducto,
-      imagenStr: form.controls.imagen.value
+      imagenStr: form.controls.imagen.value,
+      fechaVencimiento: fecha
     };
 
     return obj;
@@ -371,6 +389,93 @@ export class ProductosComponent implements OnInit {
       let obj:any = document.getElementById('imagenProducto');
       obj.setAttribute('src', arrayImage);
     } , 0);
+  }
+
+
+  // teclasHabilitadas(event: any, longitud: number){
+  //
+  //   // keycodes
+  //   // 190 && 110 = .
+  //   // 37 = flecha izquierda
+  //   // 38 = flecha arriba
+  //   // 39 = flecha derecha
+  //   // 40 = flecha abajo
+  //   // 46 = delete
+  //   // 8 = backspace
+  //   // 9 = tab
+  //   // 122 F11
+  //   // 123 F12
+  //
+  //   const longitudCampo: any = this.form.value['precio'];
+  //   console.log('longitudCampo: ', longitudCampo.length);
+  //   console.log('event[\'keyCode\']: ', event['altKey']);
+  //   return ((event['keyCode']  >= 48 && event['keyCode'] <= 57 && (longitudCampo.length < longitud && !event['shiftKey']))
+  //     || (event['keyCode']  >= 96 && event['keyCode'] <= 105 && longitudCampo.length < longitud)
+  //     || (event['keyCode'] === 190 && !event['shiftKey'])
+  //     || event['keyCode'] === 110
+  //     || event['keyCode'] === 8
+  //     || event['keyCode'] === 9
+  //     || event['keyCode'] === 37
+  //     || event['keyCode'] === 38
+  //     || event['keyCode'] === 39
+  //     || event['keyCode'] === 40
+  //     || event['keyCode'] === 46
+  //     || event['keyCode'] === 122
+  //     || event['keyCode'] === 123) && !event['altKey']
+  //     ;
+  // }
+
+  longitudCampos(nameField: string, maxIntegerLength: number, form: any) {
+    // const longitudCampo: any = form.value[nameField];
+    // console.log('longitudCampo: ', longitudCampo.length);
+
+  }
+
+  removeLettersDecimals(nameField: string, maxIntegerLength: number, maxDecimalLength: number, form: any) {
+    if (form.value[nameField]) {
+      let newValueInteger = '';
+      let newValueDecimal = '';
+      let containsPoint = false;
+      const value = form.value[nameField];
+      const lstCharacters = value.toString().split('');
+      for (const character of lstCharacters) {
+        if (character.match('[0-9]')) {
+          if (!containsPoint) {
+            if (newValueInteger.length < maxIntegerLength) {
+              newValueInteger += character;
+            }
+          } else {
+            if (newValueDecimal.length < maxDecimalLength) {
+              newValueDecimal += character;
+            }
+          }
+        } else if (character === '.') {
+          containsPoint = true;
+        }
+      }
+      const finalValue = (newValueInteger && newValueInteger.length > 0 ? newValueInteger : '0') + '.' +
+        (newValueDecimal && newValueDecimal.length > 0 ? newValueDecimal : '00');
+      if (finalValue) {
+        // tslint:disable-next-line:radix
+        if (Number.parseFloat(finalValue) && Number.parseFloat(finalValue) > 0) {
+          form.get(nameField).setValue(Number.parseFloat(finalValue));
+        } else {
+          form.get(nameField).setValue('0.00');
+        }
+      } else {
+        form.get(nameField).setValue(null);
+      }
+    }
+  }
+
+  onDateSelect(event: any, fieldName: any, form: any) {
+    const fecha: any = new Date(event.year, event.month - 1, event.day);
+    form.controls[fieldName].setValue(this.datePipe.transform(fecha, 'dd/MM/yyyy'));
+    this.modalDataPicker.close();
+  }
+
+  modalDatePicker(datePicker: any){
+    this.modalDataPicker = this.modalService.open(datePicker, {windowClass : 'modalPersonalizado'});
   }
 
 }
