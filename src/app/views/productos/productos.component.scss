@@ -1,5 +1,6 @@
 .divGeneral{
-  width: 90.8%;
+  padding-right: 12vw;
+  width: 100vw;
   background: #151515;
   height: 100%;
   position: fixed;
@@ -9,7 +10,6 @@
 .divTable{
   width: 95%;
   margin: 0 auto;
-  padding-top: 50px;
 }
 
 .divTableCustom{
@@ -74,14 +74,19 @@
 
 .divTitulo{
   color: white;
-  margin: 0 auto;
+  margin: 50px auto;
+  padding-right: 16vw;
   width: auto;
-  max-width: 150px;
-  padding-bottom: 10px;
+  max-width: 175px;
   font-family: Verdana;
   font-weight: bold;
   font-size: x-large;
   display: flex;
+}
+
+.divTitulo span{
+  display: table;
+  margin: 0 auto;
 }
 
 .botonAgregarGeneral{

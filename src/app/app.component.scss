@@ -1,6 +1,6 @@
 .list {
   width: 100%;
-  grid-template-columns: 10% 90%;
+  grid-template-columns: 12% 88%;
   display: grid;
   position: fixed;
 }
@@ -18,7 +18,11 @@
 }
 
 .div2{
-  text-align: center;
+  margin-left: 13px;
+}
+
+.iconsPersonalizado{
+  margin-left: 10px;
 }
 
 .div2 a:hover{
