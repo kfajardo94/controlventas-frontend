@@ -29,6 +29,7 @@ export class ProductosComponent implements OnInit {
   mostrarImagen: boolean;
   formatoPrecio = '1.2-2';
   modalDataPicker: any;
+  modalCrud: any;
 
   constructor(private modalService: NgbModal,
               private service: Services, private decimalPipe: DecimalPipe, private datePipe: DatePipe) {
@@ -80,14 +81,18 @@ export class ProductosComponent implements OnInit {
     this.mostrarImagen = false;
     this.modo = modo;
     this.deshabilitarBotones = false;
-    this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'}).result.then((result) => {
-      }, (reason) => {
-      }
-    );
+    this.modalCrud = this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'});
 
     const inputName = document.getElementById('inputName');
     if (inputName) {
       inputName.focus();
+    }
+
+    let precio: any = '';
+
+    if (item && item.precio) {
+      precio = String(this.decimalPipe.transform(item.precio.toString(), this.formatoPrecio));
+      precio = precio.replaceAll(',', '');
     }
 
     if (this.modo === 1) {
@@ -110,7 +115,7 @@ export class ProductosComponent implements OnInit {
         nombre: new FormControl(item.nombre, Validators.required),
         codigo: new FormControl(item.codigo, Validators.required),
         descripcion: new FormControl(item.descripcion, Validators.required),
-        precio: new FormControl(this.decimalPipe.transform(item.precio.toString(), this.formatoPrecio), Validators.required),
+        precio: new FormControl(Number(precio), Validators.required),
         tipoProducto: new FormControl(item.tipoProducto.id, Validators.required),
         imagen: new FormControl(item.imagenStr, Validators.required),
         fVencimiento: new FormControl({value: this.datePipe.transform(item.fechaVencimiento, 'dd/MM/yyyy'), disabled: true}, Validators.required)
@@ -125,7 +130,7 @@ export class ProductosComponent implements OnInit {
         nombre: new FormControl({value: item.nombre, disabled: true}),
         codigo: new FormControl({value: item.codigo, disabled: true}),
         descripcion: new FormControl({value: item.descripcion, disabled: true}),
-        precio: new FormControl({value: this.decimalPipe.transform(item.precio.toString(), this.formatoPrecio), disabled: true}),
+        precio: new FormControl({value: Number(precio), disabled: true}),
         tipoProducto: new FormControl({value: item.tipoProducto.id, disabled: true}),
         imagen: new FormControl({value: item.imagenStr, disabled: true}),
         fVencimiento: new FormControl({value: this.datePipe.transform(item.fechaVencimiento, 'dd/MM/yyyy'), disabled: true})
@@ -143,7 +148,7 @@ export class ProductosComponent implements OnInit {
       nombre: new FormControl(item.nombre, Validators.required),
       codigo: new FormControl(item.codigo, Validators.required),
       descripcion: new FormControl(item.descripcion, Validators.required),
-      precio: new FormControl(item.precio, Validators.required),
+      precio: new FormControl(Number(item.precio), Validators.required),
       tipoProducto: new FormControl(item.tipoProducto.id, Validators.required),
       imagen: new FormControl(item.imagenStr, Validators.required),
       fVencimiento: new FormControl({value: this.datePipe.transform(item.fechaVencimiento, 'dd/MM/yyyy'), disabled: true}, Validators.required)
@@ -161,6 +166,8 @@ export class ProductosComponent implements OnInit {
       page: 0,
       size: 0
     };
+
+    this.modalCrud._windowCmptRef.hostView.rootNodes[0].scrollTop = 0;
 
     this.service.getFromEntityAndMethodString('producto', 'getValidadorUniques', request).subscribe(
       res => {
@@ -182,6 +189,8 @@ export class ProductosComponent implements OnInit {
                   this.formFiltrosBK.controls.codigo.value.toString().trim(),
                   0, this.pagination.pageSize);
               }, error1 => {
+                document.body.scrollTop = 0;
+                document.documentElement.scrollTop = 0;
                 this.type = 'danger';
                 this.mensaje = 'Ha ocurrido un error al insertar los datos';
                 this.mostrarMensaje = true;
@@ -208,6 +217,8 @@ export class ProductosComponent implements OnInit {
                   this.formFiltrosBK.controls.codigo.value.toString().trim(),
                   0, this.pagination.pageSize);
               }, error1 => {
+                document.body.scrollTop = 0;
+                document.documentElement.scrollTop = 0;
                 this.type = 'danger';
                 this.mensaje = 'Ha ocurrido un error al actualizar los datos';
                 this.mostrarMensaje = true;
@@ -219,6 +230,8 @@ export class ProductosComponent implements OnInit {
             }
           }
         } else{
+          document.body.scrollTop = 0;
+          document.documentElement.scrollTop = 0;
           this.type = 'danger';
           this.mensaje = res;
           setTimeout(() => {
@@ -247,6 +260,8 @@ export class ProductosComponent implements OnInit {
         this.formFiltrosBK.controls.codigo.value.toString().trim(),
         0, this.pagination.pageSize);
     }, error => {
+      document.body.scrollTop = 0;
+      document.documentElement.scrollTop = 0;
       this.type = 'danger';
       this.mensaje = 'Ha ocurrido un error al eliminar el registro';
       this.mostrarMensaje = true;
@@ -290,8 +305,8 @@ export class ProductosComponent implements OnInit {
     return obj;
   }
 
-  limpiarControls(campo: any): any{
-    this.form.controls[campo].setValue(this.form.controls[campo].value.trim());
+  limpiarControls(campo: any, form: any): any{
+    form.controls[campo].setValue(form.controls[campo].value.trim());
   }
 
   getValuesByPage(idValue: any, nombreValue: string, codigoValue: string, pageValue: any, sizeValue: any): void{
@@ -476,6 +491,33 @@ export class ProductosComponent implements OnInit {
 
   modalDatePicker(datePicker: any){
     this.modalDataPicker = this.modalService.open(datePicker, {windowClass : 'modalPersonalizado'});
+  }
+
+  removeLetters(nameField: string, maxIntegerLength: number, form: any) {
+    if (form.value[nameField]) {
+      let newValueInteger = '';
+      const value = form.value[nameField];
+      const lstCharacters = value.toString().split('');
+      for (const character of lstCharacters) {
+        if (character.match('[0-9]')) {
+          if (newValueInteger.length < maxIntegerLength) {
+            newValueInteger += character;
+          }
+        }
+      }
+      const finalValue = (newValueInteger && newValueInteger.length > 0 ? newValueInteger : '0');
+      if (finalValue) {
+        // tslint:disable-next-line:radix
+        if (Number.parseInt(finalValue) && Number.parseInt(finalValue) > 0) {
+          // tslint:disable-next-line:radix
+          form.get(nameField).setValue(Number.parseInt(finalValue));
+        } else {
+          form.get(nameField).setValue('0');
+        }
+      } else {
+        form.get(nameField).setValue(null);
+      }
+    }
   }
 
 }

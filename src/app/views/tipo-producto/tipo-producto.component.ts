@@ -24,6 +24,7 @@ export class TipoProductoComponent implements OnInit {
   pagination: NgbPagination;
   filtroCerrado: boolean;
   nombreAccion: string;
+  modalCrud: any;
 
   constructor(private modalService: NgbModal,
               private service: Services) {
@@ -67,11 +68,7 @@ export class TipoProductoComponent implements OnInit {
   modal(content: any, modo: number, item: any): void {
     this.modo = modo;
     this.deshabilitarBotones = false;
-    this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'}).result.then((result) => {
-      }, (reason) => {
-      }
-    );
-
+    this.modalCrud = this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'});
     const inputCodigo = document.getElementById('inputCodigo');
     if (inputCodigo) {
       inputCodigo.focus();
@@ -123,6 +120,7 @@ export class TipoProductoComponent implements OnInit {
       page: 0,
       size: 0
     };
+    this.modalCrud._windowCmptRef.hostView.rootNodes[0].scrollTop = 0;
     this.service.getFromEntityAndMethodString('tipoProducto', 'getValidadorUniques', request).subscribe(
       res => {
         if (!res) {
@@ -228,8 +226,8 @@ export class TipoProductoComponent implements OnInit {
     return obj;
   }
 
-  limpiarControls(campo: any): any{
-    this.form.controls[campo].setValue(this.form.controls[campo].value.trim());
+  limpiarControls(campo: any, form: any): any{
+    form.controls[campo].setValue(form.controls[campo].value.trim());
   }
 
   getValuesByPage(idValue: any, codigoValue: string, nombreValue: string, pageValue: any, sizeValue: any): void{
@@ -280,6 +278,34 @@ export class TipoProductoComponent implements OnInit {
     this.getValuesByPage(this.formFiltros.controls.id.value.toString().trim(),
       this.formFiltros.controls.codigo.value.toString().trim(), this.formFiltros.controls.nombre.value.toString().trim(),
       0, this.pagination.pageSize);
+  }
+
+
+  removeLetters(nameField: string, maxIntegerLength: number, form: any) {
+    if (form.value[nameField]) {
+      let newValueInteger = '';
+      const value = form.value[nameField];
+      const lstCharacters = value.toString().split('');
+      for (const character of lstCharacters) {
+        if (character.match('[0-9]')) {
+          if (newValueInteger.length < maxIntegerLength) {
+            newValueInteger += character;
+          }
+        }
+      }
+      const finalValue = (newValueInteger && newValueInteger.length > 0 ? newValueInteger : '0');
+      if (finalValue) {
+        // tslint:disable-next-line:radix
+        if (Number.parseInt(finalValue) && Number.parseInt(finalValue) > 0) {
+          // tslint:disable-next-line:radix
+          form.get(nameField).setValue(Number.parseInt(finalValue));
+        } else {
+          form.get(nameField).setValue('0');
+        }
+      } else {
+        form.get(nameField).setValue(null);
+      }
+    }
   }
 
 

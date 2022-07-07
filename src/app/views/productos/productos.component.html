@@ -17,15 +17,15 @@
             <div class="form-group col-sm-6" style="margin: 0 auto;">
               <label>Id</label>
               <div class="input-group" >
-                <input type="text" class="form-control" maxlength="10" size="10" width="100" formControlName="id" >
+                <input type="text" class="form-control" maxlength="10" size="10" width="100" formControlName="id" (keyup)="removeLetters('id', 10, formFiltros)">
               </div>
               <label>Código</label>
               <div class="input-group" >
-                <input type="text" class="form-control" maxlength="20" formControlName="codigo">
+                <input type="text" class="form-control" maxlength="20" formControlName="codigo" (blur)="limpiarControls('codigo', formFiltros)">
               </div>
               <label>Nombre</label>
               <div class="input-group" >
-                <input type="text" class="form-control" maxlength="50" formControlName="nombre">
+                <input type="text" class="form-control" maxlength="50" formControlName="nombre" (blur)="limpiarControls('nombre', formFiltros)">
               </div>
             </div>
           </div>
@@ -111,7 +111,7 @@
 </div>
 
 <!--MODAL FORM ALTA, EDITAR, VER-->
-<ng-template #content let-modal>
+<ng-template #content let-modal >
   <div class="modal-header badge-dark">
     <h4 class="modal-title" id="modal-basic-title">{{nombreAccion}}</h4>
     <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
@@ -131,22 +131,22 @@
 
         <label>{{(this.modo === 1 || modo === 2) ? 'Nombre' + '*' : 'Nombre' }}</label>
         <div class="input-group" >
-          <input id="inputName" type="text" class="form-control" formControlName="nombre" (blur)="limpiarControls('nombre')">
+          <input id="inputName" type="text" class="form-control" formControlName="nombre" (blur)="limpiarControls('nombre', form)">
         </div>
 
         <label>{{(this.modo === 1 || modo === 2) ? 'Código' + '*' : 'Código' }}</label>
         <div class="input-group" >
-          <input type="text" class="form-control" formControlName="codigo" (blur)="limpiarControls('codigo')">
+          <input type="text" class="form-control" formControlName="codigo" (blur)="limpiarControls('codigo', form)">
         </div>
 
         <label>{{(this.modo === 1 || modo === 2) ? 'Descripción' + '*' : 'Descripción'}}</label>
         <div class="input-group" >
-          <textarea rows="4" type="text" class="form-control" maxlength="200" formControlName="descripcion" (blur)="limpiarControls('descripcion')"></textarea>
+          <textarea rows="4" type="text" class="form-control" maxlength="200" formControlName="descripcion" (blur)="limpiarControls('descripcion', form)"></textarea>
         </div>
 
         <label>{{(this.modo === 1 || modo === 2) ? 'Precio' + '*' : 'Precio' }}</label>
         <div class="input-group" >
-          <input type="text" class="form-control" formControlName="precio" (blur)="removeLettersDecimals('precio', 12, 2, form)" >
+          <input type="text" class="form-control" formControlName="precio" (blur)="removeLettersDecimals('precio', 10, 2, form)" >
         </div>
 
         <label>{{(this.modo === 1 || modo === 2) ? 'Tipo de Producto' + '*' : 'Tipo de Producto' }}</label>
@@ -159,14 +159,14 @@
         <div class="input-group" >
           <input *ngIf="modo !== 3" type="text" class="form-control input-date" formControlName="fVencimiento">
           <input *ngIf="modo === 3" type="text" class="form-control" formControlName="fVencimiento">
-          <button *ngIf="modo !== 3" class="btn-calendar" type="button" (click)="modalDatePicker(contentDatePicker)" >
+          <button *ngIf="modo !== 3" class="btn-calendar btn btn-sm" type="button" (click)="modalDatePicker(contentDatePicker)" >
             <i class="fa fa-calendar-alt"></i>
           </button>
         </div>
         <label>{{(this.modo === 1 || modo === 2) ? 'Imagen' + '*' : 'Imagen'}}</label>
         <div class="input-group" >
-          <input *ngIf="modo !== 3" type="file" class="form-control-file" id="imagen" (change)="cargaArchivo($event && $event.target ? $event.target: null, $event)" />
-          <img *ngIf="mostrarImagen" id="imagenProducto"  width="450" height="250" >
+          <input *ngIf="modo !== 3" type="file" class="form-control-file btn" id="imagen" (change)="cargaArchivo($event && $event.target ? $event.target: null, $event)" />
+          <img *ngIf="mostrarImagen" id="imagenProducto"  width="450" height="250" style="margin-top: 5px;" >
         </div>
       </div>
     </div>

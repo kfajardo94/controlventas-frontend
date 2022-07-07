@@ -17,15 +17,15 @@
             <div class="form-group col-sm-6" style="margin: 0 auto;">
               <label>Id</label>
               <div class="input-group" >
-                <input type="text" class="form-control" maxlength="10" size="10" width="100" formControlName="id" >
-              </div>
-              <label>Nombre</label>
-              <div class="input-group" >
-                <input type="text" class="form-control" maxlength="50" formControlName="nombre">
+                <input type="text" class="form-control" maxlength="10" size="10" width="100" formControlName="id" (keyup)="removeLetters('id', 10, formFiltros)">
               </div>
               <label>Código</label>
               <div class="input-group" >
-                <input type="text" class="form-control" maxlength="20" formControlName="codigo">
+                <input type="text" class="form-control" maxlength="20" formControlName="codigo" (blur)="limpiarControls('codigo', formFiltros)">
+              </div>
+              <label>Nombre</label>
+              <div class="input-group" >
+                <input type="text" class="form-control" maxlength="50" formControlName="nombre" (blur)="limpiarControls('nombre', formFiltros)">
               </div>
             </div>
           </div>
@@ -123,17 +123,17 @@
 
         <label>{{(this.modo === 1 || modo === 2) ? 'Código' + '*' : 'Código' }}</label>
         <div class="input-group" >
-          <input id="inputCodigo" type="text" class="form-control" formControlName="codigo" (blur)="limpiarControls('codigo')" maxlength="20">
+          <input id="inputCodigo" type="text" class="form-control" formControlName="codigo" (blur)="limpiarControls('codigo', form)" maxlength="20">
         </div>
 
         <label>{{(this.modo === 1 || modo === 2) ? 'Nombre' + '*' : 'Nombre' }}</label>
         <div class="input-group" >
-          <input type="text" class="form-control" formControlName="nombre" (blur)="limpiarControls('nombre')" maxlength="50">
+          <input type="text" class="form-control" formControlName="nombre" (blur)="limpiarControls('nombre', form)" maxlength="50">
         </div>
 
         <label>{{(this.modo === 1 || modo === 2) ? 'Descripción' + '*' : 'Descripción'}}</label>
         <div class="input-group" >
-          <textarea rows="4" type="text" class="form-control" maxlength="300" formControlName="descripcion" (blur)="limpiarControls('descripcion')"></textarea>
+          <textarea rows="4" type="text" class="form-control" maxlength="300" formControlName="descripcion" (blur)="limpiarControls('descripcion', form)"></textarea>
         </div>
 
       </div>
