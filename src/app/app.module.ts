@@ -14,6 +14,10 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {TipoProductoComponent} from './views/tipo-producto/tipo-producto.component';
 import {DatePipe, DecimalPipe} from '@angular/common';
 import {StockComponent} from './views/stock/stock.component';
+import { CompraComponent } from './views/compra/compra.component';
+import { VentaComponent } from './views/venta/venta.component';
+import { CorteCajaComponent } from './views/corte-caja/corte-caja.component';
+import { ReportesComponent } from './views/reportes/reportes.component';
 
 @NgModule({
   declarations: [
@@ -23,7 +27,11 @@ import {StockComponent} from './views/stock/stock.component';
     HomeComponent,
     ProductosComponent,
     TipoProductoComponent,
-    StockComponent
+    StockComponent,
+    CompraComponent,
+    VentaComponent,
+    CorteCajaComponent,
+    ReportesComponent
   ],
   imports: [
     BrowserModule,
