@@ -1,1 +1,223 @@
-<p>compra works!</p>
+<div class="divGeneral">
+  <div class="divTitulo">
+    <span>Compras</span>
+  </div>
+  <div class="divTable">
+    <p>
+      <button type="button" class="btn btn-dark" (click)="collapse.toggle()" [attr.aria-expanded]="!this.filtroCerrado"
+              aria-controls="collapseExample">
+        Filtros
+      </button>
+    </p>
+    <!--FILTROS-->
+    <div #collapse="ngbCollapse" [(ngbCollapse)]="this.filtroCerrado">
+      <div class="text-white">
+        <form [formGroup]="formFiltros" (submit)="filtrar(collapse)">
+          <div class="modal-body">
+            <div class="form-group col-sm-6" style="margin: 0 auto;">
+              <label>Id</label>
+              <div class="input-group" >
+                <input type="text" class="form-control" maxlength="10" size="10" width="100" formControlName="id" (keyup)="removeLetters('id', 10, formFiltros)">
+              </div>
+              <label>Código</label>
+              <div class="input-group" >
+                <input type="text" class="form-control" maxlength="20" formControlName="codigo" (blur)="limpiarControls('codigo', formFiltros)">
+              </div>
+              <label>Fecha Inicio</label>
+              <div class="input-group" >
+                <input  type="text" class="form-control input-date" formControlName="fechaInicio">
+                <button class="btn-calendar btn btn-sm" type="button" (click)="modalDatePicker(contentDatePicker, 'fechaInicio')" >
+                  <i class="fa fa-calendar-alt"></i>
+                </button>
+              </div>
+              <label>Fecha Fin</label>
+              <div class="input-group" >
+                <input  type="text" class="form-control input-date" formControlName="fechaFin">
+                <button class="btn-calendar btn btn-sm" type="button" (click)="modalDatePicker(contentDatePicker, 'fechaFin')" >
+                  <i class="fa fa-calendar-alt"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="divFooter">
+            <div style="float: right; right: 50%; position: relative;">
+              <div style="float: right; right: -50%; position: relative;">
+                <button type="submit" class="btn btn-light" ><i class="fas fa-search"></i></button>
+                <button type="button" (click)="limpiarFiltros()" class="btn btn-danger" ><i class="fas fa-times"></i></button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div>
+      <button class="btn botonAgregarGeneral" (click)="modal(content, 1, null)"><i class="fas fa-file"></i></button>
+      <!--GRID PRINCIPAL-->
+      <div class="divTableCustom">
+        <table class="table table-striped">
+          <thead>
+          <tr>
+            <th scope="col">Id</th>
+            <th scope="col">Código</th>
+            <th scope="col">Descripción</th>
+            <th scope="col">Fecha</th>
+            <th scope="col">Total</th>
+            <th scope="col">Acciones</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let obj of facturas; let i = index;" [class.tdPar]="(i+1) % 2 !== 0" [class.tdImpar]="(i+1) % 2 === 0">
+            <td>{{obj.id}}</td>
+            <td><span>{{obj.codigo}}</span></td>
+            <td><span>{{obj.descripcion}}</span></td>
+            <td><span>{{(obj.fecha | date : 'dd/MM/yyyy')}}</span></td>
+            <td><span>{{'Q ' + (obj.total | number : '1.2-2')}}</span></td>
+            <td>
+              <button (click)="modal(content, 3, obj)"><i class="fas fa-search"></i></button>
+              <!--<button (click)="modal(content, 2, obj)"><i class="fas fa-pen"></i></button>-->
+              <!--<button (click)="modalEliminar(contentEliminar, obj)"><i class="fas fa-trash"></i></button>-->
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="divPagination1" *ngIf="pagination.collectionSize > 0">
+      <div class="divPagination2">
+        <ngb-pagination class="ngbPaginationClass"
+                        [(page)]="pagination.page"
+                        (pageChange)="changePage($event-1)"
+                        [maxSize]="pagination.maxSize"
+                        [pageSize]="pagination.pageSize"
+                        [collectionSize]="pagination.collectionSize"></ngb-pagination>
+      </div>
+    </div>
+    <div class="divPagination3">
+      <div class="divPagination4">
+        <span>Registros por página: {{pagination.pageSize}}  </span>
+        <div ngbDropdown placement="top-left" class="d-inline-block">
+          <button class="btn btn-dark" id="dropdownBasic1" ngbDropdownToggle>
+          </button>
+          <div ngbDropdownMenu class="bg-dark divPageSize" aria-labelledby="dropdownBasic1">
+            <button ngbDropdownItem class="text-white text-center" (click)="changeSize(5)">5</button>
+            <button ngbDropdownItem class="text-white text-center" (click)="changeSize(10)">10</button>
+            <button ngbDropdownItem class="text-white text-center" (click)="changeSize(20)">20</button>
+            <button ngbDropdownItem class="text-white text-center" (click)="changeSize(50)">50</button>
+            <button ngbDropdownItem class="text-white text-center" (click)="changeSize(100)">100</button>
+          </div>
+        </div>
+        <span>Total de registros: {{pagination.collectionSize}}</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!--MODAL FORM ALTA, EDITAR, VER-->
+<ng-template #content let-modal>
+  <div class="modal-header badge-dark">
+    <h4 class="modal-title" id="modal-basic-title">{{nombreAccion}}</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <ngb-alert type="{{type}}" *ngIf="mostrarMensaje" [dismissible]="false">{{mensaje}}</ngb-alert>
+  <form [formGroup]="form" (submit)="guardar()">
+    <div class="modal-body">
+      <div class="form-group">
+        <div *ngIf="this.modo !== 1">
+          <label>Id</label>
+          <div class="input-group" >
+            <input type="text" class="form-control" maxlength="10" formControlName="id" >
+          </div>
+        </div>
+
+        <label>{{(this.modo === 1 || modo === 2) ? 'Código' + '*' : 'Código' }}</label>
+        <div class="input-group" >
+          <input id="inputCodigo" type="text" class="form-control" formControlName="codigo" (blur)="limpiarControls('codigo', form)" maxlength="20">
+        </div>
+
+        <label>{{(this.modo === 1 || modo === 2) ? 'Descripción' + '*' : 'Descripción'}}</label>
+        <div class="input-group" >
+          <textarea rows="4" type="text" class="form-control" maxlength="300" formControlName="descripcion" (blur)="limpiarControls('descripcion', form)"></textarea>
+        </div>
+
+        <label>{{(this.modo === 1 || modo === 2) ? 'Total' + '*' : 'Total' }}</label>
+        <div class="input-group" >
+          <input *ngIf="modo !== 3" type="text" class="form-control input-normal-disabled" formControlName="total" >
+          <input *ngIf="modo === 3" type="text" class="form-control" formControlName="total" >
+        </div>
+
+        <br>
+        <div *ngIf="modo==1" class="dropdown-divider">
+        </div>
+
+        <label class="font-weight-bold">{{'Detalle' }}</label>
+        <div *ngIf="modo === 1"  class="dropdown-divider">
+        </div>
+
+        <form *ngIf="modo === 1" [formGroup]="formDetalle" (submit)="guardar()">
+          <label>{{(this.modo === 1 || modo === 2) ? 'Producto' + '*' : 'Producto' }}</label>
+          <div class="input-group" >
+            <select class="form-control" aria-label="Default select example" formControlName="producto">
+              <option *ngFor="let producto of lstProductos" [value]="producto.id">{{producto.nombre}}</option>
+            </select>
+          </div>
+          <label>{{(this.modo === 1 || modo === 2) ? 'Cantidad' + '*' : 'Cantidad' }}</label>
+          <div class="input-group" >
+            <input type="text" class="form-control" formControlName="cantidad" (blur)="removeLetters('cantidad', 10, formDetalle)">
+          </div>
+          <label>{{(this.modo === 1 || modo === 2) ? 'Precio' + '*' : 'Precio' }}</label>
+          <div  class="input-group" >
+            <input type="text" class="form-control" formControlName="total" (blur)="removeLettersDecimals('total', 10, 2, formDetalle)" >
+          </div>
+        </form>
+        <br *ngIf="modo === 1">
+        <button class="btn btn-sm btn-success float-right" *ngIf="modo === 1" (click)="agregarProducto()" [disabled]="this.formDetalle.invalid" ><i class="fas fa-plus"></i></button>
+        <div class="divTableCustom">
+          <table class="table table-striped">
+            <thead>
+            <tr>
+              <th scope="col">Id</th>
+              <th scope="col">Producto</th>
+              <th scope="col">Cantidad</th>
+              <th scope="col">Precio Individual</th>
+              <th scope="col">Total</th>
+              <th scope="col">Acciones</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let obj of lstDetalle; let i = index;" >
+              <td>{{obj.id}}</td>
+              <td><span>{{obj.producto ? obj.producto.nombre : ''}}</span></td>
+              <td><span>{{obj.cantidad}}</span></td>
+              <td><span>{{'Q ' + (obj.total/obj.cantidad | number : '1.2-2')}}</span></td>
+              <td><span>{{'Q ' + (obj.total | number : '1.2-2')}}</span></td>
+              <td>
+                <!--<button (click)="modal(content, 2, obj)"><i class="fas fa-pen"></i></button>-->
+                <button (click)="eliminarDetalle(obj)"><i class="fas fa-trash"></i></button>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+    <div class="modal-footer divFooter">
+      <button type="button" (click)="modal.close()" class="btn btn-danger" [disabled]="deshabilitarBotones"><i class="fas fa-times"></i></button>
+      <button type="submit" class="btn btn-success" [disabled]="this.form.invalid || deshabilitarBotones || !lstDetalle || lstDetalle.length < 1" *ngIf="modo !== 3 && modo !== 4"><i class="fas fa-check"></i></button>
+    </div>
+  </form>
+
+</ng-template>
+
+
+<ng-template #contentDatePicker let-modal>
+  <div style="margin: 0 auto;">
+    <form [formGroup]="formFiltros">
+      <ngb-datepicker #d (dateSelect)="onDateSelect($event, formFiltros)"></ngb-datepicker>
+    </form>
+  </div>
+</ng-template>

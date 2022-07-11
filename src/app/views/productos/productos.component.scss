@@ -1,15 +1,16 @@
 .divGeneral{
   padding-right: 12vw;
   width: 100vw;
-  background: #151515;
+  background: #34495E;
   height: 100%;
-  position: fixed;
+  overflow-y: scroll;
+  position: absolute;
 }
 
 //sección table
 .divTable{
   width: 95%;
-  margin: 0 auto;
+  margin: auto auto 220px auto;
 }
 
 .divTableCustom{

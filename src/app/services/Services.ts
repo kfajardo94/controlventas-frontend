@@ -59,6 +59,16 @@ export class Services {
     return this.http.post(this.URL + '/' + entity, body, {headers});
   }
 
+  saveEntityPromise(entity: string, body: any): Promise<any> {
+    const headers = new HttpHeaders({
+      'Access-Control-Allow-Headers' : 'Content-Type',
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': '*'
+    });
+
+    return this.http.post(this.URL + '/' + entity, body, {headers}).toPromise();
+  }
+
   editEntity(entity: string, body: any): Observable<any> {
     const headers = new HttpHeaders({
       'Access-Control-Allow-Headers' : 'Content-Type',

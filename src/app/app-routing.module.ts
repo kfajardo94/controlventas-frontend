@@ -3,13 +3,15 @@ import {RouterModule, Routes} from '@angular/router';
 import {HomeComponent} from './views/home/home.component';
 import {ProductosComponent} from './views/productos/productos.component';
 import {TipoProductoComponent} from './views/tipo-producto/tipo-producto.component';
-import {StockComponent} from "./views/stock/stock.component";
+import {CompraComponent} from './views/compra/compra.component';
+import {VentaComponent} from './views/venta/venta.component';
 
 const routes: Routes = [
   {path: '', component: HomeComponent},
   {path: 'producto', component: ProductosComponent},
   {path: 'tipo-producto', component: TipoProductoComponent},
-  {path: 'stock', component: StockComponent}
+  {path: 'compra', component: CompraComponent},
+  {path: 'venta', component: VentaComponent}
 ];
 
 @NgModule({

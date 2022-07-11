@@ -13,7 +13,6 @@ import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {TipoProductoComponent} from './views/tipo-producto/tipo-producto.component';
 import {DatePipe, DecimalPipe} from '@angular/common';
-import {StockComponent} from './views/stock/stock.component';
 import { CompraComponent } from './views/compra/compra.component';
 import { VentaComponent } from './views/venta/venta.component';
 import { CorteCajaComponent } from './views/corte-caja/corte-caja.component';
@@ -27,7 +26,6 @@ import { ReportesComponent } from './views/reportes/reportes.component';
     HomeComponent,
     ProductosComponent,
     TipoProductoComponent,
-    StockComponent,
     CompraComponent,
     VentaComponent,
     CorteCajaComponent,
