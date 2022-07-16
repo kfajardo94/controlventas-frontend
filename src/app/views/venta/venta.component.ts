@@ -33,6 +33,7 @@ export class VentaComponent implements OnInit {
   lstDetalle: DetalleFactura[];
   lstProductos: Producto[];
   contadorProductos: number;
+  mostrarAgregar: boolean;
 
   constructor(private modalService: NgbModal,
               private service: Services, private decimalPipe: DecimalPipe, private datePipe: DatePipe) {
@@ -51,6 +52,7 @@ export class VentaComponent implements OnInit {
     this.lstDetalle = [];
     this.lstProductos = [];
     this.contadorProductos = 0;
+    this.mostrarAgregar = false;
     this.form = new FormGroup({
       id: new FormControl(''),
       codigo: new FormControl('', Validators.required),
@@ -87,6 +89,7 @@ export class VentaComponent implements OnInit {
 
   ngOnInit(): void {
     this.cargarListas();
+    this.getCierre();
     const fechaInicio = new Date();
     fechaInicio.setMonth(fechaInicio.getMonth()-3);
 
@@ -164,16 +167,12 @@ export class VentaComponent implements OnInit {
 
   guardar() {
     const request: any = {
-      facturas: {
-        id: this.form.controls.id.value,
-        codigo: this.form.controls.codigo.value,
-        tipo: 'V',
-        descripcion: this.form.controls.descripcion.value,
-        fecha: new Date(),
-        total: 0
-      },
-      page: 0,
-      size: 0
+      id: this.form.controls.id.value,
+      codigo: this.form.controls.codigo.value,
+      tipo: 'V',
+      descripcion: this.form.controls.descripcion.value,
+      fecha: new Date(),
+      total: 0
     };
     this.modalCrud._windowCmptRef.hostView.rootNodes[0].scrollTop = 0;
     this.service.getFromEntityAndMethodString('factura', 'getValidadorUniques', request).subscribe(
@@ -521,6 +520,27 @@ export class VentaComponent implements OnInit {
         this.lstDetalle = [... this.lstDetalle, obj];
       }
     }
+  }
+
+  async getCierre(){
+    this.mostrarAgregar = false;
+    const fechaActual = this.datePipe.transform(new Date(), 'yyyy-MM-dd');
+
+    const objFecha = {
+      fechaInmediata: fechaActual
+    };
+    await this.service.getFromEntityAndMethodPromise('cierreCaja', 'getFechaInmediataByFecha', objFecha).then( res =>{
+      if (res) {
+        let fechaActual:any = new Date();
+        fechaActual = this.datePipe.transform(fechaActual, 'dd/MM/yyyy');
+        let fechaRes = this.datePipe.transform(res.fecha, 'dd/MM/yyyy');
+        if (fechaActual !== fechaRes) {
+          this.mostrarAgregar = true;
+        }
+      }
+    }).then(error1 => {
+      console.error(error1);
+    });
   }
 
 }

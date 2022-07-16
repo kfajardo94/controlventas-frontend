@@ -33,6 +33,7 @@ export class CompraComponent implements OnInit {
   lstDetalle: DetalleFactura[];
   lstProductos: Producto[];
   contadorProductos: number;
+  mostrarAgregar: boolean;
 
   constructor(private modalService: NgbModal,
               private service: Services, private decimalPipe: DecimalPipe, private datePipe: DatePipe) {
@@ -51,6 +52,7 @@ export class CompraComponent implements OnInit {
     this.lstDetalle = [];
     this.lstProductos = [];
     this.contadorProductos = 0;
+    this.mostrarAgregar = false;
     this.form = new FormGroup({
       id: new FormControl(''),
       codigo: new FormControl('', Validators.required),
@@ -87,6 +89,7 @@ export class CompraComponent implements OnInit {
 
   ngOnInit(): void {
     this.cargarListas();
+    this.getCierre();
     const fechaInicio = new Date();
     fechaInicio.setMonth(fechaInicio.getMonth()-3);
 
@@ -164,20 +167,17 @@ export class CompraComponent implements OnInit {
 
   guardar() {
     const request: any = {
-      facturas: {
-        id: this.form.controls.id.value,
-        codigo: this.form.controls.codigo.value,
-        tipo: 'C',
-        descripcion: this.form.controls.descripcion.value,
-        fecha: new Date(),
-        total: 0
-      },
-      page: 0,
-      size: 0
+      id: this.form.controls.id.value,
+      codigo: this.form.controls.codigo.value,
+      tipo: 'C',
+      descripcion: this.form.controls.descripcion.value,
+      fecha: new Date(),
+      total: 0
     };
     this.modalCrud._windowCmptRef.hostView.rootNodes[0].scrollTop = 0;
     this.service.getFromEntityAndMethodString('factura', 'getValidadorUniques', request).subscribe(
       res => {
+        console.log('res: ', res);
         if (!res) {
           if (this.modo === 1){
             if (this.form && this.form.valid){
@@ -191,7 +191,7 @@ export class CompraComponent implements OnInit {
 
                 this.lstDetalle.forEach( x => {
                   x.factura = res;
-                })
+                });
 
                 const objDetalle = {
                   lstDetalle: this.lstDetalle,
@@ -199,32 +199,36 @@ export class CompraComponent implements OnInit {
                   factura: null,
                   page: 0,
                   size: 0
-                }
+                };
 
                 this.service.saveEntity('detalleFactura', objDetalle).subscribe( res2 => {
                   setTimeout(() => {
                     this.modalService.dismissAll();
                     this.mostrarMensaje = false;
-                  } , 1000);
+                  } , 3000);
                   this.getValuesByPage(this.formFiltrosBK.controls.id.value.toString().trim(),
                     this.formFiltrosBK.controls.codigo.value.toString().trim(), this.formFiltrosBK.controls.fechaInicio.value.toString()
                       .trim(), this.formFiltrosBK.controls.fechaFin.value.toString(), 0, this.pagination.pageSize);
                 }, error1 => {
+                  document.body.scrollTop = 0;
+                  document.documentElement.scrollTop = 0;
                   this.type = 'danger';
                   this.mensaje = 'Ha ocurrido un error al insertar los datos';
                   this.mostrarMensaje = true;
                   setTimeout(() => {
                     this.mostrarMensaje = false;
-                  } , 1500);
+                  } , 2000);
                   console.error('Error al consumir Post');
                 });
               }, error1 => {
+                document.body.scrollTop = 0;
+                document.documentElement.scrollTop = 0;
                 this.type = 'danger';
                 this.mensaje = 'Ha ocurrido un error al insertar los datos';
                 this.mostrarMensaje = true;
                 setTimeout(() => {
                   this.mostrarMensaje = false;
-                } , 1500);
+                } , 2000);
                 console.error('Error al consumir Post');
               });
             }
@@ -232,6 +236,8 @@ export class CompraComponent implements OnInit {
             if (this.form && this.form.valid){
               const obj = this.llenarObjeto(this.form);
               this.service.editEntity('factura', obj).subscribe(res => {
+                document.body.scrollTop = 0;
+                document.documentElement.scrollTop = 0;
                 this.type = 'success';
                 this.mensaje = 'Registro modificado';
                 this.deshabilitarBotones = true;
@@ -239,27 +245,31 @@ export class CompraComponent implements OnInit {
                 setTimeout(() => {
                   this.modalService.dismissAll();
                   this.mostrarMensaje = false;
-                } , 1000);
+                } , 2000);
                 this.getValuesByPage(this.formFiltrosBK.controls.id.value.toString().trim(),
                   this.formFiltrosBK.controls.codigo.value.toString().trim(), this.formFiltrosBK.controls.fechaInicio.value.toString()
                     .trim(), this.formFiltrosBK.controls.fechaFin.value.toString(), 0, this.pagination.pageSize);
               }, error1 => {
+                document.body.scrollTop = 0;
+                document.documentElement.scrollTop = 0;
                 this.type = 'danger';
                 this.mensaje = 'Ha ocurrido un error al actualizar los datos';
                 this.mostrarMensaje = true;
                 setTimeout(() => {
                   this.mostrarMensaje = false;
-                } , 1500);
+                } , 2000);
                 console.error('Error al consumir Post');
               });
             }
           }
         } else {
+          document.body.scrollTop = 0;
+          document.documentElement.scrollTop = 0;
           this.type = 'danger';
           this.mensaje = res;
           setTimeout(() => {
             this.mostrarMensaje = false;
-          } , 1500);
+          } , 2000);
           console.error('Error al consumir servicio');this.mostrarMensaje = true;
 
         }
@@ -521,6 +531,27 @@ export class CompraComponent implements OnInit {
         this.lstDetalle = [... this.lstDetalle, obj];
       }
     }
+  }
+
+  async getCierre(){
+    this.mostrarAgregar = false;
+    const fechaActual = this.datePipe.transform(new Date(), 'yyyy-MM-dd');
+
+    const objFecha = {
+      fechaInmediata: fechaActual
+    };
+    await this.service.getFromEntityAndMethodPromise('cierreCaja', 'getFechaInmediataByFecha', objFecha).then( res =>{
+      if (res) {
+        let fechaActual:any = new Date();
+        fechaActual = this.datePipe.transform(fechaActual, 'dd/MM/yyyy');
+        let fechaRes = this.datePipe.transform(res.fecha, 'dd/MM/yyyy');
+        if (fechaActual !== fechaRes) {
+          this.mostrarAgregar = true;
+        }
+      }
+    }).then(error1 => {
+      console.error(error1);
+    });
   }
 
 }

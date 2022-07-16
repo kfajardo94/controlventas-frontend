@@ -15,7 +15,6 @@ import {TipoProductoComponent} from './views/tipo-producto/tipo-producto.compone
 import {DatePipe, DecimalPipe} from '@angular/common';
 import { CompraComponent } from './views/compra/compra.component';
 import { VentaComponent } from './views/venta/venta.component';
-import { CorteCajaComponent } from './views/corte-caja/corte-caja.component';
 import { ReportesComponent } from './views/reportes/reportes.component';
 
 @NgModule({
@@ -28,7 +27,6 @@ import { ReportesComponent } from './views/reportes/reportes.component';
     TipoProductoComponent,
     CompraComponent,
     VentaComponent,
-    CorteCajaComponent,
     ReportesComponent
   ],
   imports: [

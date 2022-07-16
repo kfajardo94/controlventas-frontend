@@ -8,9 +8,47 @@
       <a class="nav-link" (click)="viajarOpciones('compra')" ><i class="fa fa-shopping-bag iconsPersonalizado"></i>  Compras<span class="sr-only">(current)</span></a>
       <a class="nav-link" (click)="viajarOpciones('venta')" ><i class="fa fa-cart-plus iconsPersonalizado"></i>  Ventas<span class="sr-only">(current)</span></a>
       <a class="nav-link" (click)="viajarOpciones('reporte')" ><i class="fa fa-clipboard-list"></i>  Reporte de compra y venta<span class="sr-only">(current)</span></a>
+      <a class="nav-link" (click)="cerrarCaja(content)" ><i class="fa fa-cash-register"></i>  Cierre de Caja<span class="sr-only">(current)</span></a>
     </div>
   </div>
   <div >
     <router-outlet></router-outlet>
   </div>
 </div>
+
+<!--MODAL FORM CIERRE-->
+<ng-template #content let-modal >
+  <div class="modal-header badge-dark">
+    <h4 class="modal-title" id="modal-basic-title">Cierre de Caja</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <ngb-alert type="success" *ngIf="deshabilitarBotones" [dismissible]="false">El Cierre de Caja ya se ha realizado</ngb-alert>
+  <form [formGroup]="form" (submit)="confirmarCierre()">
+    <div class="modal-body">
+      <div class="form-group">
+        <label >{{'Saldo Inicial'}}</label>
+        <div class="input-group"></div>
+          <input type="text" class="form-control input-normal-disabled" formControlName="saldoAnterior">
+        </div>
+        <label>{{'Saldo del Día'}}</label>
+        <div class="input-group">
+          <input type="text" class="form-control input-normal-disabled" formControlName="saldoCierre">
+        </div>
+        <label>{{'Saldo a Favor'}}</label>
+        <div class="input-group">
+          <input type="text" class="form-control input-normal-disabled" formControlName="saldoFavor">
+        </div>
+        <label *ngIf="this.deshabilitarBotones">{{'Fecha y Hora de Cierre'}}</label>
+        <div class="input-group">
+          <input *ngIf="this.deshabilitarBotones" type="text" class="form-control input-normal-disabled" formControlName="fechaHoraCierre">
+        </div>
+    </div>
+    <div class="modal-footer divFooter">
+      <button type="button" (click)="modal.close()" class="btn btn-danger" ><i class="fas fa-times"></i></button>
+      <button type="submit" class="btn btn-success" [disabled]="this.form.invalid || deshabilitarBotones" ><i class="fas fa-check"></i></button>
+    </div>
+  </form>
+
+</ng-template>

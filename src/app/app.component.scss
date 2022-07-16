@@ -42,3 +42,8 @@
 .list ul:hover{
   background: #303030;
 }
+
+.input-normal-disabled:disabled{
+  background-color: #fff;
+  color: #495057;
+}

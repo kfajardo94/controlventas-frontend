@@ -52,7 +52,7 @@
       </div>
     </div>
     <div>
-      <button class="btn botonAgregarGeneral" (click)="modal(content, 1, null)"><i class="fas fa-file"></i></button>
+      <button *ngIf="mostrarAgregar" class="btn botonAgregarGeneral" (click)="modal(content, 1, null)"><i class="fas fa-file"></i></button>
       <!--GRID PRINCIPAL-->
       <div class="divTableCustom">
         <table class="table table-striped">
