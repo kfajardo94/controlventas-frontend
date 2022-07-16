@@ -1,3 +1,4 @@
+<title>Ventas</title>
 <div class="divGeneral">
   <div class="divTitulo">
     <span>Ventas</span>
@@ -21,7 +22,7 @@
               </div>
               <label>Código</label>
               <div class="input-group" >
-                <input type="text" class="form-control" maxlength="20" formControlName="codigo" (blur)="limpiarControls('codigo', formFiltros)">
+                <input type="text" class="form-control" maxlength="50" formControlName="codigo" (blur)="limpiarControls('codigo', formFiltros)">
               </div>
               <label>Fecha Inicio</label>
               <div class="input-group" >
@@ -135,7 +136,7 @@
 
         <label>{{(this.modo === 1 || modo === 2) ? 'Código' + '*' : 'Código' }}</label>
         <div class="input-group" >
-          <input id="inputCodigo" type="text" class="form-control" formControlName="codigo" (blur)="limpiarControls('codigo', form)" maxlength="20">
+          <input id="inputCodigo" type="text" class="form-control" formControlName="codigo" (blur)="limpiarControls('codigo', form)" maxlength="50">
         </div>
 
         <label>{{(this.modo === 1 || modo === 2) ? 'Descripción' + '*' : 'Descripción'}}</label>
@@ -184,17 +185,17 @@
               <th scope="col">Cantidad</th>
               <th scope="col">Precio Individual</th>
               <th scope="col">Total</th>
-              <th scope="col">Acciones</th>
+              <th *ngIf="modo !== 3" scope="col">Acciones</th>
             </tr>
             </thead>
             <tbody>
             <tr *ngFor="let obj of lstDetalle; let i = index;" >
               <td>{{obj.id}}</td>
-              <td><span>{{obj.producto ? obj.producto.nombre : ''}}</span></td>
+              <td><span>{{obj.productoCodigo + ' - ' +  obj.productoNombre}}</span></td>
               <td><span>{{obj.cantidad}}</span></td>
               <td><span>{{'Q ' + (obj.total/obj.cantidad | number : '1.2-2')}}</span></td>
               <td><span>{{'Q ' + (obj.total | number : '1.2-2')}}</span></td>
-              <td>
+              <td *ngIf="modo !== 3">
                 <!--<button (click)="modal(content, 2, obj)"><i class="fas fa-pen"></i></button>-->
                 <button (click)="eliminarDetalle(obj)"><i class="fas fa-trash"></i></button>
               </td>

@@ -2,12 +2,12 @@
 <div class="row list">
   <div class="div1" >
     <div class="div2">
-      <a class="nav-link" href="/"><i class="fas fa-home iconsPersonalizado"></i> Inicio</a>
-      <a class="nav-link" href="/tipo-producto"><i class="fa fa-list iconsPersonalizado"></i>  Tipos de Producto<span class="sr-only">(current)</span></a>
-      <a class="nav-link" href="/producto"><i class="fa fa-box-open iconsPersonalizado"></i>  Productos<span class="sr-only">(current)</span></a>
-      <a class="nav-link" href="/compra"><i class="fa fa-shopping-bag iconsPersonalizado"></i>  Compras<span class="sr-only">(current)</span></a>
-      <a class="nav-link" href="/venta"><i class="fa fa-cart-plus iconsPersonalizado"></i>  Ventas<span class="sr-only">(current)</span></a>
-      <a class="nav-link" href="/reporte"><i class="fa fa-clipboard-list"></i>  Reporte de compra y venta<span class="sr-only">(current)</span></a>
+      <a class="nav-link" (click)="viajarOpciones('')"><i class="fas fa-home iconsPersonalizado"></i> Inicio</a>
+      <a class="nav-link" (click)="viajarOpciones('tipo-producto')"><i class="fa fa-list iconsPersonalizado"></i>  Tipos de Producto<span class="sr-only">(current)</span></a>
+      <a class="nav-link" (click)="viajarOpciones('producto')"><i class="fa fa-box-open iconsPersonalizado"></i>  Productos<span class="sr-only">(current)</span></a>
+      <a class="nav-link" (click)="viajarOpciones('compra')" ><i class="fa fa-shopping-bag iconsPersonalizado"></i>  Compras<span class="sr-only">(current)</span></a>
+      <a class="nav-link" (click)="viajarOpciones('venta')" ><i class="fa fa-cart-plus iconsPersonalizado"></i>  Ventas<span class="sr-only">(current)</span></a>
+      <a class="nav-link" (click)="viajarOpciones('reporte')" ><i class="fa fa-clipboard-list"></i>  Reporte de compra y venta<span class="sr-only">(current)</span></a>
     </div>
   </div>
   <div >

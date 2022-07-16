@@ -5,6 +5,7 @@ import {Services} from '../../services/Services';
 import {NgbDate, NgbModal, NgbModalRef, NgbPagination, NgbPaginationConfig} from '@ng-bootstrap/ng-bootstrap';
 import {TipoProducto} from '../../bo/TipoProducto';
 import {DatePipe, DecimalPipe} from '@angular/common';
+import {UrlField} from '../../bo/UrlField';
 
 @Component({
   selector: 'app-productos',
@@ -23,13 +24,14 @@ export class ProductosComponent implements OnInit {
   modo: number;
   deshabilitarBotones = false;
   mostrarMensaje = false;
+  mostrarMensajeImagen = false;
   pagination: NgbPagination;
   filtroCerrado: boolean;
   nombreAccion: string;
   mostrarImagen: boolean;
   formatoPrecio = '1.2-2';
-  modalDataPicker: any;
   modalCrud: any;
+  mensajeImagen: string;
 
   constructor(private modalService: NgbModal,
               private service: Services, private decimalPipe: DecimalPipe, private datePipe: DatePipe) {
@@ -45,6 +47,8 @@ export class ProductosComponent implements OnInit {
     this.pagination.page = 0;
     this.pagination.pageSize = 10;
     this.pagination.maxSize = 10;
+    this.mostrarMensajeImagen = false;
+    this.mensajeImagen = '';
     this.form = new FormGroup({
       id: new FormControl(''),
       nombre: new FormControl('', Validators.required),
@@ -52,8 +56,7 @@ export class ProductosComponent implements OnInit {
       descripcion: new FormControl('', Validators.required),
       precio: new FormControl('', Validators.required),
       tipoProducto: new FormControl('', Validators.required),
-      imagen: new FormControl('', Validators.required),
-      fVencimiento: new FormControl('', Validators.required)
+      imagen: new FormControl('', Validators.required)
     });
 
     this.formFiltros = new FormGroup({
@@ -104,8 +107,7 @@ export class ProductosComponent implements OnInit {
         descripcion: new FormControl('', Validators.required),
         precio: new FormControl('', Validators.required),
         tipoProducto: new FormControl('', Validators.required),
-        imagen: new FormControl('', Validators.required),
-        fVencimiento: new FormControl({value: '', disabled: true}, Validators.required)
+        imagen: new FormControl('', Validators.required)
       });
     } else if (this.modo === 2) {
 
@@ -117,8 +119,7 @@ export class ProductosComponent implements OnInit {
         descripcion: new FormControl(item.descripcion, Validators.required),
         precio: new FormControl(Number(precio), Validators.required),
         tipoProducto: new FormControl(item.tipoProducto.id, Validators.required),
-        imagen: new FormControl(item.imagenStr, Validators.required),
-        fVencimiento: new FormControl({value: this.datePipe.transform(item.fechaVencimiento, 'dd/MM/yyyy'), disabled: true}, Validators.required)
+        imagen: new FormControl(item.imagenStr, Validators.required)
       });
 
       this.cargarImagenForm(item.imagenStr);
@@ -132,8 +133,7 @@ export class ProductosComponent implements OnInit {
         descripcion: new FormControl({value: item.descripcion, disabled: true}),
         precio: new FormControl({value: Number(precio), disabled: true}),
         tipoProducto: new FormControl({value: item.tipoProducto.id, disabled: true}),
-        imagen: new FormControl({value: item.imagenStr, disabled: true}),
-        fVencimiento: new FormControl({value: this.datePipe.transform(item.fechaVencimiento, 'dd/MM/yyyy'), disabled: true})
+        imagen: new FormControl({value: item.imagenStr, disabled: true})
       });
       this.cargarImagenForm( item.imagenStr);
     }
@@ -150,8 +150,7 @@ export class ProductosComponent implements OnInit {
       descripcion: new FormControl(item.descripcion, Validators.required),
       precio: new FormControl(Number(item.precio), Validators.required),
       tipoProducto: new FormControl(item.tipoProducto.id, Validators.required),
-      imagen: new FormControl(item.imagenStr, Validators.required),
-      fVencimiento: new FormControl({value: this.datePipe.transform(item.fechaVencimiento, 'dd/MM/yyyy'), disabled: true}, Validators.required)
+      imagen: new FormControl(item.imagenStr, Validators.required)
     });
   }
 
@@ -196,7 +195,7 @@ export class ProductosComponent implements OnInit {
                 this.mostrarMensaje = true;
                 setTimeout(() => {
                   this.mostrarMensaje = false;
-                } , 1500);
+                } , 2000);
                 console.error('Error al consumir Post');
               });
             }
@@ -224,7 +223,7 @@ export class ProductosComponent implements OnInit {
                 this.mostrarMensaje = true;
                 setTimeout(() => {
                   this.mostrarMensaje = false;
-                } , 1500);
+                } , 2000);
                 console.error('Error al consumir Post');
               });
             }
@@ -236,7 +235,7 @@ export class ProductosComponent implements OnInit {
           this.mensaje = res;
           setTimeout(() => {
             this.mostrarMensaje = false;
-          } , 1500);
+          } , 2000);
           console.error('Error al consumir servicio');this.mostrarMensaje = true;
         }
       }, error =>{
@@ -245,7 +244,34 @@ export class ProductosComponent implements OnInit {
 
   }
 
-  eliminar(): void {
+  async eliminar(){
+
+    let stockProducto = null;
+    const fields: UrlField[] = [{
+      fieldName: 'idProducto',
+      value: this.form.controls.id.value
+    }];
+    await this.service.getItemsFromEntityByFieldsPromise('stock', 'getByProducto', fields).then( res => {
+      stockProducto = res;
+      if (stockProducto) {
+        document.body.scrollTop = 0;
+        document.documentElement.scrollTop = 0;
+        this.type = 'danger';
+        this.mensaje = 'No se puede eliminar el producto, aún existe en inventario';
+        this.mostrarMensaje = true;
+        setTimeout(() => {
+          this.mostrarMensaje = false;
+        } , 2000);
+        console.error('Error al consumir delete');
+      }
+    }).catch( error => {
+        console.error('Ha ocurrido un error');
+    });
+
+    if (stockProducto) {
+      return;
+    }
+
     this.service.deleteEntity('producto', this.form.controls.id.value).subscribe(res => {
       this.type = 'success';
       this.mensaje = 'Registro eliminado';
@@ -267,7 +293,7 @@ export class ProductosComponent implements OnInit {
       this.mostrarMensaje = true;
       setTimeout(() => {
         this.mostrarMensaje = false;
-      } , 1500);
+      } , 2000);
       console.error('Error al consumir delete');
     });
   }
@@ -280,17 +306,6 @@ export class ProductosComponent implements OnInit {
       tipoProducto = this.lstTipoProducto.find(x => x.id === Number(form.controls.tipoProducto.value.toString()));
     }
 
-    const fechaArray: [] = form.controls.fVencimiento.value.toString().split('/');
-
-    let nuevaFechaString = '';
-
-    fechaArray.slice().reverse().forEach(x =>
-      nuevaFechaString += x + '-'
-    );
-
-    nuevaFechaString = nuevaFechaString.substr(0, nuevaFechaString.length -1);
-    const fecha = new Date(nuevaFechaString);
-
     const obj = {
       id: form.controls.id.value.toString().trim(),
       nombre: form.controls.nombre.value.trim(),
@@ -298,8 +313,7 @@ export class ProductosComponent implements OnInit {
       descripcion: form.controls.descripcion.value.trim(),
       precio: form.controls.precio.value,
       tipoProducto: tipoProducto,
-      imagenStr: form.controls.imagen.value,
-      fechaVencimiento: fecha
+      imagenStr: form.controls.imagen.value
     };
 
     return obj;
@@ -362,18 +376,52 @@ export class ProductosComponent implements OnInit {
       0, this.pagination.pageSize);
   }
 
-  cargaArchivo(target: any, event: any) {
+  async cargaArchivo(target: any, event: any) {
     const file = target && target.files ? target.files[0] : null;
 
     if (file) {
-      this.mostrarImagen = true;
-      this.getBase64(file).then(
-        data => {
-          const arrayImage: any = data;
-          this.cargarImagenForm(arrayImage);
+      let reader = new FileReader();
+
+      let error = false;
+      reader.readAsDataURL(file);
+      reader.onload = async(e) => {
+
+        let image = new Image();
+
+        if (e && e.target && e.target.result) {
+          image.src = e.target.result.toString();
+
+          image.onload = async (a) => {
+            const height = image.height;
+            const width = image.width;
+            console.log('height: ', height, ' - ', width);
+            if (height > 1000 || width > 1000) {
+              this.type = 'danger';
+              this.mensajeImagen = 'La imagen debe tener un tamaño máximo de 1000 x 1000';
+              this.mostrarMensajeImagen = true;
+              setTimeout(() => {
+                this.mostrarMensajeImagen = false;
+              } , 2000);
+              console.error('Error al consumir Post');
+              return false;
+            }else {
+              this.mostrarImagen = true;
+              this.getBase64(file).then(
+                data => {
+                  const arrayImage: any = data;
+                  this.cargarImagenForm(arrayImage);
+                }
+              )
+            }
+            return;
+          };
         }
-      )
+      }
     }
+
+  }
+
+  validarImagen (error: boolean) {
 
   }
 
@@ -440,11 +488,11 @@ export class ProductosComponent implements OnInit {
   //     ;
   // }
 
-  longitudCampos(nameField: string, maxIntegerLength: number, form: any) {
-    // const longitudCampo: any = form.value[nameField];
-    // console.log('longitudCampo: ', longitudCampo.length);
-
-  }
+  // longitudCampos(nameField: string, maxIntegerLength: number, form: any) {
+  //   // const longitudCampo: any = form.value[nameField];
+  //   // console.log('longitudCampo: ', longitudCampo.length);
+  //
+  // }
 
   removeLettersDecimals(nameField: string, maxIntegerLength: number, maxDecimalLength: number, form: any) {
     if (form.value[nameField]) {
@@ -483,15 +531,15 @@ export class ProductosComponent implements OnInit {
     }
   }
 
-  onDateSelect(event: any, fieldName: any, form: any) {
-    const fecha: any = new Date(event.year, event.month - 1, event.day);
-    form.controls[fieldName].setValue(this.datePipe.transform(fecha, 'dd/MM/yyyy'));
-    this.modalDataPicker.close();
-  }
-
-  modalDatePicker(datePicker: any){
-    this.modalDataPicker = this.modalService.open(datePicker, {windowClass : 'modalPersonalizado'});
-  }
+  // onDateSelect(event: any, fieldName: any, form: any) {
+  //   const fecha: any = new Date(event.year, event.month - 1, event.day);
+  //   form.controls[fieldName].setValue(this.datePipe.transform(fecha, 'dd/MM/yyyy'));
+  //   this.modalDataPicker.close();
+  // }
+  //
+  // modalDatePicker(datePicker: any){
+  //   this.modalDataPicker = this.modalService.open(datePicker, {windowClass : 'modalPersonalizado'});
+  // }
 
   removeLetters(nameField: string, maxIntegerLength: number, form: any) {
     if (form.value[nameField]) {

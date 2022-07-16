@@ -2,14 +2,15 @@
   padding-right: 12vw;
   width: 100vw;
   background: #34495E;
-  height: 119.2%;
-  position: fixed;
+  height: 100%;
+  overflow-y: scroll;
+  position: absolute;
 }
 
 //sección table
 .divTable{
   width: 95%;
-  margin: 0 auto;
+  margin: auto auto 220px auto;
 }
 
 .divTableCustom{
@@ -33,19 +34,19 @@
 }
 
 .divTable table th{
-  background: black;
+  background: #212F3D;
   color: white;
   text-align: center;
 }
 
 .tdPar{
-  background: #555555 !important;
+  background: #566573 !important;
   color: white;
   text-align: center;
 }
 
 .tdImpar{
-  background: #727272;
+  background: #808B96;
   color: white;
   text-align: center;
 }
@@ -77,7 +78,7 @@
   margin: 50px auto;
   padding-right: 10vw;
   width: auto;
-  max-width: 434px;
+  max-width: 435px;
   font-family: Verdana;
   font-weight: bold;
   font-size: x-large;

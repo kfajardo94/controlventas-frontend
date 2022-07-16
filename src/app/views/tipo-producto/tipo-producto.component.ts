@@ -4,6 +4,7 @@ import {NgbModal, NgbPagination, NgbPaginationConfig} from '@ng-bootstrap/ng-boo
 import {Services} from '../../services/Services';
 import {TipoProducto} from '../../bo/TipoProducto';
 import {error, promise} from 'selenium-webdriver';
+import {UrlField} from '../../bo/UrlField';
 
 @Component({
   selector: 'app-tipo-producto',
@@ -191,7 +192,34 @@ export class TipoProductoComponent implements OnInit {
     );
   }
 
-  eliminar(): void {
+  async eliminar() {
+
+    let producto = null;
+    const fields: UrlField[] = [{
+      fieldName: 'idTipoProducto',
+      value: this.form.controls.id.value
+    }];
+    await this.service.getItemsFromEntityByFieldsPromise('producto', 'getByTipoProducto', fields).then( res => {
+      producto = res;
+      if (producto) {
+        document.body.scrollTop = 0;
+        document.documentElement.scrollTop = 0;
+        this.type = 'danger';
+        this.mensaje = 'No se puede eliminar el registro, se encuentra asociado a productos';
+        this.mostrarMensaje = true;
+        setTimeout(() => {
+          this.mostrarMensaje = false;
+        } , 2000);
+        console.error('Error al consumir delete');
+      }
+    }).catch( error => {
+      console.error('Ha ocurrido un error');
+    });
+
+    if (producto) {
+      return;
+    }
+
     this.service.deleteEntity('tipoProducto', this.form.controls.id.value).subscribe(res => {
       this.type = 'success';
       this.mensaje = 'Registro eliminado';

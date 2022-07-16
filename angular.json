@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "ecommerce": {
+    "controlventas": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -20,7 +20,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/ecommerce",
+            "outputPath": "dist/controlventas",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
@@ -75,18 +75,18 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "ecommerce:build"
+            "browserTarget": "controlventas:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "ecommerce:build:production"
+              "browserTarget": "controlventas:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "ecommerce:build"
+            "browserTarget": "controlventas:build"
           }
         },
         "test": {
@@ -123,18 +123,18 @@
           "builder": "@angular-devkit/build-angular:protractor",
           "options": {
             "protractorConfig": "e2e/protractor.conf.js",
-            "devServerTarget": "ecommerce:serve"
+            "devServerTarget": "controlventas:serve"
           },
           "configurations": {
             "production": {
-              "devServerTarget": "ecommerce:serve:production"
+              "devServerTarget": "controlventas:serve:production"
             }
           }
         }
       }
     }
   },
-  "defaultProject": "ecommerce",
+  "defaultProject": "controlventas",
   "cli": {
     "analytics": false
   }

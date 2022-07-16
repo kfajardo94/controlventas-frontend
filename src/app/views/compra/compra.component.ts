@@ -353,9 +353,6 @@ export class CompraComponent implements OnInit {
 
   changePage(event: any): void {
     this.pagination.page = event;
-    console.log('c1: ', this.formFiltrosBK.controls.fechaInicio.value.toString()
-      .trim())
-    console.log('c2: ', this.formFiltrosBK.controls.fechaFin.value.toString().trim());
     this.getValuesByPage(this.formFiltrosBK.controls.id.value.toString().trim(),
       this.formFiltrosBK.controls.codigo.value.toString().trim(), this.formFiltrosBK.controls.fechaInicio.value.toString()
         .trim(), this.formFiltrosBK.controls.fechaFin.value.toString()
@@ -490,7 +487,7 @@ export class CompraComponent implements OnInit {
 
     const factura: any = null;
 
-    const detalle = new DetalleFactura(0, factura, producto, cantidadProducto, precioCompra);
+    const detalle = new DetalleFactura(0, factura, producto.codigo, producto.nombre, cantidadProducto, precioCompra);
     detalle.idTemporal = this.contadorProductos;
 
 
@@ -511,7 +508,7 @@ export class CompraComponent implements OnInit {
 
   eliminarDetalle(item: any){
 
-    const valorTotalFactura = Number(this.form.controls.total.value) - Number(item.precioCompra);
+    const valorTotalFactura = Number(this.form.controls.total.value) - Number(item.total);
 
     this.form.controls.total.setValue(valorTotalFactura);
 

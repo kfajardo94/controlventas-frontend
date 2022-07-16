@@ -9,10 +9,10 @@ export class Producto {
   precio: number;
   imagen: string;
   imagenStr: string;
-  fechaVencimiento: Date;
+  cantidadStock: number;
 
   constructor(id: number, codigo: string, nombre: string, descripcion: string, tipoProducto: TipoProducto,
-              precio: number, imagen: string, imagenStr: string, fechaVencimiento: Date) {
+              precio: number, imagen: string, imagenStr: string, cantidadStock: number) {
     this.id = id;
     this.codigo = codigo;
     this.nombre = nombre;
@@ -21,6 +21,6 @@ export class Producto {
     this.precio = precio;
     this.imagen = imagen;
     this.imagenStr = imagenStr;
-    this.fechaVencimiento = fechaVencimiento;
+    this.cantidadStock = cantidadStock;
   }
 }

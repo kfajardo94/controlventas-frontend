@@ -49,6 +49,29 @@ export class Services {
       {headers});
   }
 
+  getItemsFromEntityByFieldsPromise(entity: string, method: string, fields: UrlField[]) {
+
+    const headers = new HttpHeaders({
+      'Access-Control-Allow-Headers' : 'Content-Type',
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': '*'
+    });
+
+    let urlFields = '';
+    let cont = 0;
+    for (const field of fields) {
+      if (cont > 0) {
+        urlFields += '&' + field.fieldName + '=' + field.value;
+      } else if (cont === 0) {
+        urlFields = field.fieldName + '=' + field.value;
+      }
+
+      cont++;
+    }
+    return this.http.get(this.URL + '/' + entity + '/' + method + '?' + urlFields,
+      {headers}).toPromise();
+  }
+
   saveEntity(entity: string, body: any): Observable<any> {
     const headers = new HttpHeaders({
       'Access-Control-Allow-Headers' : 'Content-Type',
