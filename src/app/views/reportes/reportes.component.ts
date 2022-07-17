@@ -29,6 +29,9 @@ export class ReportesComponent implements OnInit {
   fechaSeleccionada: string;
   lstDetalle: DetalleFactura[];
   lstProductos: Producto[];
+  saldoCompras: string;
+  saldoVentas: string;
+  saldoFavor: string;
 
   constructor(private modalService: NgbModal,
               private service: Services, private decimalPipe: DecimalPipe, private datePipe: DatePipe) {
@@ -43,6 +46,9 @@ export class ReportesComponent implements OnInit {
     this.fechaSeleccionada = '';
     this.lstDetalle = [];
     this.lstProductos = [];
+    this.saldoCompras = this.decimalPipe.transform(0, '1.2-2')!.toString();
+    this.saldoVentas = this.decimalPipe.transform(0, '1.2-2')!.toString();
+    this.saldoFavor = this.decimalPipe.transform(0, '1.2-2')!.toString();
     this.form = new FormGroup({
       id: new FormControl(''),
       codigo: new FormControl('', Validators.required),
@@ -73,6 +79,8 @@ export class ReportesComponent implements OnInit {
       fechaInicio: new FormControl({value: this.datePipe.transform(fechaInicio, 'dd/MM/yyyy'), disabled: true}),
       fechaFin: new FormControl({value: this.datePipe.transform(new Date(), 'dd/MM/yyyy'), disabled: true})
     });
+
+    this.getTotales();
 
     this.filtroCerrado = true;
   }
@@ -125,7 +133,7 @@ export class ReportesComponent implements OnInit {
         id: new FormControl({value: item.id, disabled: true}),
         codigo: new FormControl({value: item.codigo, disabled: true}),
         descripcion: new FormControl({value: item.descripcion, disabled: true}),
-        total: new FormControl({value: 'Q ' + String(this.decimalPipe.transform(item.total, '1.1-2')), disabled: true})
+        total: new FormControl({value: 'Q ' + String(this.decimalPipe.transform(item.total, '1.2-2')), disabled: true})
       });
 
       const objDetalle = {
@@ -230,6 +238,7 @@ export class ReportesComponent implements OnInit {
       this.formFiltros.controls.codigo.value.toString().trim(), this.formFiltrosBK.controls.fechaInicio.value.toString()
         .trim(), this.formFiltrosBK.controls.fechaFin.value.toString(),
       0, this.pagination.pageSize);
+    this.getTotales();
   }
 
   removeLetters(nameField: string, maxIntegerLength: number, form: any) {
@@ -267,6 +276,65 @@ export class ReportesComponent implements OnInit {
     const fecha: any = new Date(event.year, event.month - 1, event.day);
     form.controls[this.fechaSeleccionada].setValue(this.datePipe.transform(fecha, 'dd/MM/yyyy'));
     this.modalDataPicker.close();
+  }
+
+  async getTotales(){
+
+    const fechaIArray = this.formFiltros.controls.fechaInicio.value.split('/');
+
+    let nuevaFechaIString = '';
+
+    fechaIArray.slice().reverse().forEach((x: any) =>
+      nuevaFechaIString += x + '-'
+    );
+
+    nuevaFechaIString = nuevaFechaIString.substr(0, nuevaFechaIString.length -1);
+    const fechaI = new Date(nuevaFechaIString);
+
+    const fechaFArray = this.formFiltros.controls.fechaFin.value.split('/');
+
+    let nuevaFechaFString = '';
+
+    fechaFArray.slice().reverse().forEach( (x: any) =>
+      nuevaFechaFString += x + '-'
+    );
+
+    nuevaFechaFString = nuevaFechaFString.substr(0, nuevaFechaFString.length -1);
+    const fechaF = new Date(nuevaFechaFString);
+
+    const obj = {
+      obj: null,
+      fechaInicio: fechaI,
+      fechaFin: fechaF,
+      page: 0,
+      size: 0
+    };
+
+    let sCompras: number = 0;
+    let sVentas: number = 0;
+    let sFavor: number = 0;
+
+    this.saldoCompras = this.decimalPipe.transform(sCompras, '1.2-2')!.toString();
+    this.saldoVentas = this.decimalPipe.transform(sVentas, '1.2-2')!.toString();
+    this.saldoFavor = this.decimalPipe.transform(sFavor, '1.2-2')!.toString();
+
+    await this.service.getFromEntityAndMethodPromise('factura', 'getTotales', obj).then(res => {
+      if (res) {
+        for (const obj of res) {
+          if (obj.tipo === 'C') {
+            sCompras = obj.totalFacturas;
+            this.saldoCompras = this.decimalPipe.transform(obj.totalFacturas, '1.2-2')!.toString();
+          } else if (obj.tipo === 'V') {
+            sVentas = obj.totalFacturas;
+            this.saldoVentas = this.decimalPipe.transform(obj.totalFacturas, '1.2-2')!.toString();
+          }
+        }
+      }
+    }).catch(reason => {
+      console.error(reason)
+    });
+
+    this.saldoFavor = this.decimalPipe.transform((sVentas-sCompras), '1.2-2')!.toString();
   }
 
 

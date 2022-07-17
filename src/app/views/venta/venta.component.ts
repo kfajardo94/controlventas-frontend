@@ -132,7 +132,7 @@ export class VentaComponent implements OnInit {
 
     if (this.modo === 1) {
       this.contadorProductos = 0;
-      this.nombreAccion = 'Agregar';
+      this.nombreAccion = 'Realizar Venta';
       this.form = new FormGroup({
         id: new FormControl(''),
         codigo: new FormControl('', Validators.required),
@@ -159,7 +159,7 @@ export class VentaComponent implements OnInit {
         id: new FormControl({value: item.id, disabled: true}),
         codigo: new FormControl({value: item.codigo, disabled: true}),
         descripcion: new FormControl({value: item.descripcion, disabled: true}),
-        total: new FormControl({value: 'Q ' + String(this.decimalPipe.transform(item.total, '1.1-2')), disabled: true})
+        total: new FormControl({value: 'Q ' + String(this.decimalPipe.transform(item.total, '1.2-2')), disabled: true})
       });
 
       const objDetalle = {
@@ -567,8 +567,10 @@ export class VentaComponent implements OnInit {
     const objFecha = {
       fechaInmediata: fechaActual
     };
+    let caja = null;
     await this.service.getFromEntityAndMethodPromise('cierreCaja', 'getFechaInmediataByFecha', objFecha).then( res =>{
       if (res) {
+        caja = res;
         let fechaActual:any = new Date();
         fechaActual = this.datePipe.transform(fechaActual, 'dd/MM/yyyy');
         let fechaRes = this.datePipe.transform(res.fecha, 'dd/MM/yyyy');
@@ -579,6 +581,9 @@ export class VentaComponent implements OnInit {
     }).catch(error1 => {
       console.error(error1);
     });
+    if (!caja){
+      this.mostrarAgregar = true;
+    }
   }
 
   async cargarDatosProducto(value: any) {

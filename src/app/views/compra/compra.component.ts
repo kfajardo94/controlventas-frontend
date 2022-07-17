@@ -112,7 +112,7 @@ export class CompraComponent implements OnInit {
 
     if (this.modo === 1) {
       this.contadorProductos = 0;
-      this.nombreAccion = 'Agregar';
+      this.nombreAccion = 'Realizar Compra';
       this.form = new FormGroup({
         id: new FormControl(''),
         codigo: new FormControl('', Validators.required),
@@ -139,7 +139,7 @@ export class CompraComponent implements OnInit {
         id: new FormControl({value: item.id, disabled: true}),
         codigo: new FormControl({value: item.codigo, disabled: true}),
         descripcion: new FormControl({value: item.descripcion, disabled: true}),
-        total: new FormControl({value: 'Q ' + String(this.decimalPipe.transform(item.total, '1.1-2')), disabled: true})
+        total: new FormControl({value: 'Q ' + String(this.decimalPipe.transform(item.total, '1.2-2')), disabled: true})
       });
 
       const objDetalle = {
@@ -155,15 +155,6 @@ export class CompraComponent implements OnInit {
       });
     }
   }
-
-  // modalEliminar(contentEliminar: any, item: any): void {
-  //   this.modalService.open(contentEliminar, { size: 'sm' });
-  //   this.deshabilitarBotones = false;
-  //   this.form = new FormGroup({
-  //     id: new FormControl({value: item.id, disabled: true}),
-  //     nombre: new FormControl({value: item.nombre, disabled: true})
-  //   });
-  // }
 
   guardar() {
     const request: any = {
@@ -539,8 +530,10 @@ export class CompraComponent implements OnInit {
     const objFecha = {
       fechaInmediata: fechaActual
     };
+    let caja = null;
     await this.service.getFromEntityAndMethodPromise('cierreCaja', 'getFechaInmediataByFecha', objFecha).then( res =>{
       if (res) {
+        caja = res;
         let fechaActual:any = new Date();
         fechaActual = this.datePipe.transform(fechaActual, 'dd/MM/yyyy');
         let fechaRes = this.datePipe.transform(res.fecha, 'dd/MM/yyyy');
@@ -551,6 +544,9 @@ export class CompraComponent implements OnInit {
     }).catch(error1 => {
       console.error(error1);
     });
+    if (!caja) {
+      this.mostrarAgregar = true;
+    }
   }
 
 }

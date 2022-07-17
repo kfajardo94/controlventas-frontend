@@ -3,6 +3,17 @@
   <div class="divTitulo">
     <span>Reporte de compra y venta</span>
   </div>
+  <br>
+  <div class="col-12 m-auto divSaldos">
+    <span class="divSaldos-span1">Compras: </span>
+    <span>Q {{saldoCompras}} </span>
+    <span class="divSaldos-span1">Ventas: </span>
+    <span>Q {{saldoVentas}} </span>
+  </div>
+  <div class="col-12 m-auto divSaldos">
+    <span class="divSaldos-span1">Saldo a favor: </span>
+    <span>Q {{saldoFavor}}</span>
+  </div>
   <div class="divTable">
     <p>
       <button type="button" class="btn btn-dark" (click)="collapse.toggle()" [attr.aria-expanded]="!this.filtroCerrado"
@@ -56,7 +67,7 @@
       <!--GRID PRINCIPAL-->
       <div class="divTableCustom">
         <table class="table table-striped">
-          <thead>
+          <thead >
           <tr>
             <th scope="col">Id</th>
             <th scope="col">Código</th>
@@ -188,7 +199,7 @@
         <button type="button" class="btn btn-sm btn-success float-right" *ngIf="modo === 1" (click)="agregarProducto()" [disabled]="this.formDetalle.invalid" ><i class="fas fa-plus"></i></button>
         <div class="divTableCustom">
           <table class="table table-striped">
-            <thead>
+            <thead class="bg-dark text-white">
             <tr>
               <th scope="col">Id</th>
               <th scope="col">Producto</th>
