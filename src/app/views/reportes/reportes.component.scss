@@ -1,0 +1,221 @@
+.divGeneral{
+  padding-right: 12vw;
+  width: 100vw;
+  background: #34495E;
+  height: 100%;
+  overflow-y: scroll;
+  position: absolute;
+}
+
+//sección table
+.divTable{
+  width: 95%;
+  margin: auto auto 220px auto;
+}
+
+.divTableCustom{
+  margin-top: 50px;
+  max-height: 400px;
+  max-width: 100%;
+  overflow: auto;
+}
+
+.divTableCustom table thead{
+  position: sticky;
+  top: 0;
+}
+
+//justificar texto dentro de un td en un table
+.divTableCustom table td span{
+  display: inline-block;
+  max-width: 300px;
+  word-wrap:break-word;
+  white-space: normal;
+}
+
+.divTable table th{
+  background: #212F3D;
+  color: white;
+  text-align: center;
+}
+
+.tdPar{
+  background: #566573 !important;
+  color: white;
+  text-align: center;
+}
+
+.tdImpar{
+  background: #808B96;
+  color: white;
+  text-align: center;
+}
+
+.divTableCustom button{
+  outline: none;
+  border: none;
+  margin-right: 5px;
+  background: white;
+  color: black;
+  box-shadow: none;
+  width: 40px;
+  height: 35px;
+  border-radius: 3px 3px 3px 3px;
+}
+
+.divTableCustom button:hover{
+  outline: none;
+  margin-right: 5px;
+  color: gray;
+}
+
+.divTableCustom button:active{
+  box-shadow: inset 0px 0.5px 3px 0px black !important;
+}
+
+.divTitulo{
+  color: white;
+  margin: 50px auto;
+  padding-right: 10vw;
+  width: auto;
+  max-width: 557px;
+  font-family: Verdana;
+  font-weight: bold;
+  font-size: x-large;
+  display: flex;
+}
+
+.divTitulo span{
+  display: table;
+  margin: 0 auto;
+}
+
+.botonAgregarGeneral{
+  float: right;
+  margin-top: -35px;
+  color: black;
+  border-radius: 3px 3px 3px 3px;
+  background: white;
+  width: 40px;
+  height: 35px;
+  border: none;
+  outline: none;
+}
+
+.botonAgregarGeneral:hover{
+  color: gray;
+}
+
+.botonAgregarGeneral:active{
+  box-shadow: inset 0px 0.5px 3px 0px black !important;
+}
+
+.divPagination1 {
+  float: right;
+  right: 50%;
+  position: relative;
+}
+
+.divPagination2 {
+  margin-top: 10px;
+  float: right;
+  right: -50%;
+  position: relative;
+}
+
+.ngbPaginationClass::ng-deep.page-link{
+  background: black !important;
+  color: white;
+  border-color: white;
+  outline: none;
+  box-shadow: none;
+}
+
+.ngbPaginationClass::ng-deep li.active .page-link{
+  background: slategray !important;
+}
+
+.ngbPaginationClass::ng-deep.page-link:hover{
+  background: #303030 !important;
+}
+
+.divPagination3 {
+  margin-top: 70px;
+  float: left;
+  left: 50%;
+  position: relative;
+}
+
+.divPagination4 {
+  margin-top: 10px;
+  float: left;
+  left: -50%;
+  position: relative;
+}
+
+.divPagination4 span {
+  color: white;
+  font-family: Verdana;
+  font-size: medium;
+  margin: 5px 5px 0px 15px;
+}
+
+.divPageSize{
+  min-width: 67px !important;
+}
+
+.divPageSize button:hover{
+  background: gray !important;
+}
+
+.divMensajeEliminar span{
+
+  display: inline-block;
+  max-width: 100%;
+  word-wrap:break-word;
+  white-space: normal;
+}
+
+.divFooter button{
+  width: 50px;
+  height: 40px;
+}
+
+.table td  {
+  vertical-align: middle;
+}
+
+::ng-deep .modalPersonalizado .modal-dialog {
+  width: 237px;
+  position: relative;
+  top: 30%;
+  transform: translateY(-10%);
+}
+
+::ng-deep .modalPersonalizadoCrud .modal-dialog{
+  max-width: 50% !important;
+  position: relative;
+}
+
+.btn-calendar{
+  border: none;
+  margin-top: 2px;
+  margin-bottom: 2px;
+  z-index: 1;
+  margin-left: -30px;
+  text-align: center;
+}
+
+.btn-calendar:hover{
+  background: silver;
+}
+
+.input-date:disabled{
+  background-color: #fff;
+  color: #495057;
+}
+
+.input-normal-disabled:disabled{
+  background-color: #fff;
+  color: #495057;
+}

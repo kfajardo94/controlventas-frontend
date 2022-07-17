@@ -139,7 +139,7 @@ export class CompraComponent implements OnInit {
         id: new FormControl({value: item.id, disabled: true}),
         codigo: new FormControl({value: item.codigo, disabled: true}),
         descripcion: new FormControl({value: item.descripcion, disabled: true}),
-        total: new FormControl({value: item.total, disabled: true})
+        total: new FormControl({value: 'Q ' + String(this.decimalPipe.transform(item.total, '1.1-2')), disabled: true})
       });
 
       const objDetalle = {

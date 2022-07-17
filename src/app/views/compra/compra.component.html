@@ -183,7 +183,7 @@
           </div>
         </form>
         <br *ngIf="modo === 1">
-        <button class="btn btn-sm btn-success float-right" *ngIf="modo === 1" (click)="agregarProducto()" [disabled]="this.formDetalle.invalid" ><i class="fas fa-plus"></i></button>
+        <button type="button" class="btn btn-sm btn-success float-right" *ngIf="modo === 1" (click)="agregarProducto()" [disabled]="this.formDetalle.invalid" ><i class="fas fa-plus"></i></button>
         <div class="divTableCustom">
           <table class="table table-striped">
             <thead>
