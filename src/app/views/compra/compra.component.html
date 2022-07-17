@@ -127,27 +127,33 @@
   <form [formGroup]="form" (submit)="guardar()">
     <div class="modal-body">
       <div class="form-group">
-        <div *ngIf="this.modo !== 1">
-          <label>Id</label>
-          <div class="input-group" >
+        <div class="input-group" *ngIf="this.modo !== 1">
+          <div class="col-12" >
+            <label>Id</label>
             <input type="text" class="form-control" maxlength="10" formControlName="id" >
           </div>
         </div>
 
-        <label>{{(this.modo === 1 || modo === 2) ? 'Código' + '*' : 'Código' }}</label>
         <div class="input-group" >
-          <input id="inputCodigo" type="text" class="form-control" formControlName="codigo" (blur)="limpiarControls('codigo', form)" maxlength="50">
+          <div class="col-12">
+            <label>{{(this.modo === 1 || modo === 2) ? 'Código' + '*' : 'Código' }}</label>
+            <input id="inputCodigo" type="text" class="form-control" formControlName="codigo" (blur)="limpiarControls('codigo', form)" maxlength="50">
+          </div>
         </div>
 
-        <label>{{(this.modo === 1 || modo === 2) ? 'Descripción' + '*' : 'Descripción'}}</label>
         <div class="input-group" >
-          <textarea rows="4" type="text" class="form-control" maxlength="300" formControlName="descripcion" (blur)="limpiarControls('descripcion', form)"></textarea>
+          <div class="col-12">
+            <label>{{(this.modo === 1 || modo === 2) ? 'Descripción' + '*' : 'Descripción'}}</label>
+            <textarea rows="4" type="text" class="form-control" maxlength="300" formControlName="descripcion" (blur)="limpiarControls('descripcion', form)"></textarea>
+          </div>
         </div>
 
-        <label>{{(this.modo === 1 || modo === 2) ? 'Total' + '*' : 'Total' }}</label>
         <div class="input-group" >
-          <input *ngIf="modo !== 3" type="text" class="form-control input-normal-disabled" formControlName="total" >
-          <input *ngIf="modo === 3" type="text" class="form-control" formControlName="total" >
+          <div class="col-12">
+            <label>{{(this.modo === 1 || modo === 2) ? 'Total' + '*' : 'Total' }}</label>
+            <input *ngIf="modo !== 3" type="text" class="form-control input-normal-disabled" formControlName="total" >
+            <input *ngIf="modo === 3" type="text" class="form-control" formControlName="total" >
+          </div>
         </div>
 
         <br>
@@ -159,19 +165,21 @@
         </div>
 
         <form *ngIf="modo === 1" [formGroup]="formDetalle" (submit)="guardar()">
-          <label>{{(this.modo === 1 || modo === 2) ? 'Producto' + '*' : 'Producto' }}</label>
           <div class="input-group" >
-            <select class="form-control" aria-label="Default select example" formControlName="producto">
-              <option *ngFor="let producto of lstProductos" [value]="producto.id">{{producto.nombre}}</option>
-            </select>
-          </div>
-          <label>{{(this.modo === 1 || modo === 2) ? 'Cantidad' + '*' : 'Cantidad' }}</label>
-          <div class="input-group" >
-            <input type="text" class="form-control" formControlName="cantidad" (blur)="removeLetters('cantidad', 10, formDetalle)">
-          </div>
-          <label>{{(this.modo === 1 || modo === 2) ? 'Precio' + '*' : 'Precio' }}</label>
-          <div  class="input-group" >
-            <input type="text" class="form-control" formControlName="total" (blur)="removeLettersDecimals('total', 10, 2, formDetalle)" >
+            <div class="col-4">
+              <label>{{(this.modo === 1 || modo === 2) ? 'Producto' + '*' : 'Producto' }}</label>
+              <select class="form-control" aria-label="Default select example" formControlName="producto">
+                <option *ngFor="let producto of lstProductos" [value]="producto.id">{{producto.nombre}}</option>
+              </select>
+            </div>
+            <div class="col-4" >
+              <label>{{(this.modo === 1 || modo === 2) ? 'Cantidad' + '*' : 'Cantidad' }}</label>
+              <input type="text" class="form-control" formControlName="cantidad" (blur)="removeLetters('cantidad', 10, formDetalle)">
+            </div>
+            <div class="col-4" >
+              <label>{{(this.modo === 1 || modo === 2) ? 'Precio' + '*' : 'Precio' }}</label>
+              <input type="text" class="form-control" formControlName="total" (blur)="removeLettersDecimals('total', 10, 2, formDetalle)" >
+            </div>
           </div>
         </form>
         <br *ngIf="modo === 1">

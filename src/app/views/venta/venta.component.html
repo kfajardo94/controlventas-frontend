@@ -138,7 +138,7 @@
           <div class="col-12">
             <label>{{(this.modo === 1 || modo === 2) ? 'Código' + '*' : 'Código' }}</label>
             <input #inputCodigo id="inputCodigo" type="text" class="form-control" formControlName="codigo" (blur)="limpiarControls('codigo', form)" maxlength="50">
-            <label *ngIf="this.modo === 1" class="small float-right">{{inputCodigo.value.length}}/{{inputCodigo.maxLength}}</label>
+            <!--<label *ngIf="this.modo === 1" class="small float-right">{{inputCodigo.value.length}}/{{inputCodigo.maxLength}}</label>-->
           </div>
         </div>
 
@@ -146,7 +146,7 @@
           <div class="col-12">
             <label>{{(this.modo === 1 || modo === 2) ? 'Descripción' + '*' : 'Descripción'}}</label>
             <textarea #inputDescripcion rows="4" type="text" class="form-control" maxlength="300" formControlName="descripcion" (blur)="limpiarControls('descripcion', form)"></textarea>
-            <label *ngIf="this.modo === 1" class="small float-right">{{inputDescripcion.value.length}}/{{inputDescripcion.maxLength}}</label>
+            <!--<label *ngIf="this.modo === 1" class="small float-right">{{inputDescripcion.value.length}}/{{inputDescripcion.maxLength}}</label>-->
           </div>
         </div>
 
