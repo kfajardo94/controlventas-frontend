@@ -302,12 +302,16 @@ export class ReportesComponent implements OnInit {
     nuevaFechaFString = nuevaFechaFString.substr(0, nuevaFechaFString.length -1);
     const fechaF = new Date(nuevaFechaFString);
 
+    const id = this.formFiltrosBK.controls.id.value;
+    const codigo = this.formFiltrosBK.controls.codigo.value;
     const obj = {
       obj: null,
       fechaInicio: fechaI,
       fechaFin: fechaF,
       page: 0,
-      size: 0
+      size: 0,
+      id: id,
+      codigo: codigo
     };
 
     let sCompras: number = 0;

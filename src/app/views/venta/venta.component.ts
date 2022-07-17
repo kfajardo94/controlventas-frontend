@@ -501,8 +501,7 @@ export class VentaComponent implements OnInit {
           this.cargarDatosProducto(obj);
         } , 2000);
         return;
-      }
-      else if (stock.cantidad === 0) {
+      } else if (stock.cantidad === 0) {
         await this.service.deleteEntity('stock', stock.id).subscribe(res => {
         }, error =>{
           console.error(error);
@@ -513,6 +512,16 @@ export class VentaComponent implements OnInit {
           console.error(error);
         });
       }
+    } else {
+      this.errorStock = true;
+      setTimeout(() => {
+        this.errorStock = false;
+        const obj = {
+          value: idProducto
+        };
+        this.cargarDatosProducto(obj);
+      } , 2000);
+      return;
     }
 
     const detalle = new DetalleFactura(0, factura, producto.codigo, producto.nombre, cantidadProducto, precioCompra);

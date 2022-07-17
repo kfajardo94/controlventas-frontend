@@ -106,7 +106,9 @@ export class AppComponent {
       fechaInicio: fechaCierre,
       fechaFin: fechaMenorHoyValue,
       page: 0,
-      size: 0
+      size: 0,
+      id: '',
+      codigo: ''
     };
 
     // MENOR A HOY
@@ -152,7 +154,9 @@ export class AppComponent {
         fechaInicio: fechaActual,
         fechaFin: fechaActual,
         page: 0,
-        size: 0
+        size: 0,
+        id: '',
+        codigo: ''
       };
 
       let responseHoy:[] = [];
