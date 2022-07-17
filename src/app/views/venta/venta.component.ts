@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {Factura} from '../../bo/Factura';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {NgbModal, NgbPagination, NgbPaginationConfig} from '@ng-bootstrap/ng-bootstrap';
@@ -6,6 +6,7 @@ import {DetalleFactura} from '../../bo/DetalleFactura';
 import {Producto} from '../../bo/Producto';
 import {Services} from '../../services/Services';
 import {DatePipe, DecimalPipe} from '@angular/common';
+import {UrlField} from '../../bo/UrlField';
 
 @Component({
   selector: 'app-venta',
@@ -34,6 +35,9 @@ export class VentaComponent implements OnInit {
   lstProductos: Producto[];
   contadorProductos: number;
   mostrarAgregar: boolean;
+  cantidadComboProructos: number[];
+  errorStock: boolean;
+  guardaRegistros: boolean;
 
   constructor(private modalService: NgbModal,
               private service: Services, private decimalPipe: DecimalPipe, private datePipe: DatePipe) {
@@ -53,6 +57,9 @@ export class VentaComponent implements OnInit {
     this.lstProductos = [];
     this.contadorProductos = 0;
     this.mostrarAgregar = false;
+    this.cantidadComboProructos = [];
+    this.errorStock = false;
+    this.guardaRegistros = false;
     this.form = new FormGroup({
       id: new FormControl(''),
       codigo: new FormControl('', Validators.required),
@@ -64,7 +71,7 @@ export class VentaComponent implements OnInit {
       id: new FormControl(''),
       producto: new FormControl('', Validators.required),
       cantidad: new FormControl('', Validators.required),
-      total: new FormControl('', Validators.required)
+      total: new FormControl({value: '', disabled: true}, Validators.required)
     });
 
     const fechaInicio = new Date();
@@ -98,13 +105,26 @@ export class VentaComponent implements OnInit {
     this.getValuesByPage('', '', fInicio ? fInicio.toString() : '', fFin ? fFin.toString() : '', this.pagination.page, this.pagination.pageSize);
   }
 
-  modal(content: any, modo: number, item: any): void {
+  async modal(content: any, modo: number, item: any) {
+    this.guardaRegistros = false;
+    this.cantidadComboProructos = [];
 
     this.lstDetalle = [];
 
     this.modo = modo;
     this.deshabilitarBotones = false;
     this.modalCrud = this.modalService.open(content, {windowClass: 'modalPersonalizadoCrud'});
+
+    this.modalCrud.result.then((result: any) => {
+      if (this.modo === 1 && !this.guardaRegistros) {
+        this.revertirStock();
+      }
+    }, (reason: any) => {
+      if (this.modo === 1 && !this.guardaRegistros) {
+        this.revertirStock();
+      }
+    });
+
     const inputCodigo = document.getElementById('inputCodigo');
     if (inputCodigo) {
       inputCodigo.focus();
@@ -123,7 +143,7 @@ export class VentaComponent implements OnInit {
         id: new FormControl(''),
         producto: new FormControl('', Validators.required),
         cantidad: new FormControl('', Validators.required),
-        total: new FormControl('', Validators.required)
+        total: new FormControl({value: '', disabled: true}, Validators.required)
       });
     } else if (this.modo === 2) {
       this.nombreAccion = 'Editar';
@@ -148,22 +168,13 @@ export class VentaComponent implements OnInit {
         factura: item,
         page: 0,
         size: 0
-      }
+      };
 
       this.service.getFromEntityAndMethod('detalleFactura', 'getByFactura', objDetalle).subscribe( res => {
         this.lstDetalle = res;
       });
     }
   }
-
-  // modalEliminar(contentEliminar: any, item: any): void {
-  //   this.modalService.open(contentEliminar, { size: 'sm' });
-  //   this.deshabilitarBotones = false;
-  //   this.form = new FormGroup({
-  //     id: new FormControl({value: item.id, disabled: true}),
-  //     nombre: new FormControl({value: item.nombre, disabled: true})
-  //   });
-  // }
 
   guardar() {
     const request: any = {
@@ -190,7 +201,7 @@ export class VentaComponent implements OnInit {
 
                 this.lstDetalle.forEach( x => {
                   x.factura = res;
-                })
+                });
 
                 const objDetalle = {
                   lstDetalle: this.lstDetalle,
@@ -198,10 +209,11 @@ export class VentaComponent implements OnInit {
                   factura: null,
                   page: 0,
                   size: 0
-                }
+                };
 
                 this.service.saveEntity('detalleFactura', objDetalle).subscribe( res2 => {
                   setTimeout(() => {
+                    this.guardaRegistros = true;
                     this.modalService.dismissAll();
                     this.mostrarMensaje = false;
                   } , 1000);
@@ -236,6 +248,7 @@ export class VentaComponent implements OnInit {
                 this.deshabilitarBotones = true;
                 this.mostrarMensaje = true;
                 setTimeout(() => {
+                  this.guardaRegistros = true;
                   this.modalService.dismissAll();
                   this.mostrarMensaje = false;
                 } , 1000);
@@ -267,30 +280,6 @@ export class VentaComponent implements OnInit {
       }
     );
   }
-
-  // eliminar(): void {
-  //   this.service.deleteEntity('facturas', this.form.controls.id.value).subscribe(res => {
-  //     this.type = 'success';
-  //     this.mensaje = 'Registro eliminado';
-  //     this.deshabilitarBotones = true;
-  //     this.mostrarMensaje = true;
-  //     setTimeout(() => {
-  //       this.modalService.dismissAll();
-  //       this.mostrarMensaje = false;
-  //     } , 1000);
-  //     this.getValuesByPage(this.formFiltrosBK.controls.id.value.toString().trim(),
-  //       this.formFiltrosBK.controls.codigo.value.toString().trim(), this.formFiltrosBK.controls.nombre.value.toString()
-  //         .trim(), 0, this.pagination.pageSize);
-  //   }, error => {
-  //     this.type = 'danger';
-  //     this.mensaje = 'Ha ocurrido un error al eliminar el registro';
-  //     this.mostrarMensaje = true;
-  //     setTimeout(() => {
-  //       this.mostrarMensaje = false;
-  //     } , 1500);
-  //     console.error('Error al consumir delete');
-  //   });
-  // }
 
   llenarObjeto(form: any): any{
     const obj = {
@@ -476,33 +465,76 @@ export class VentaComponent implements OnInit {
     }
   }
 
-  agregarProducto(){
+  async agregarProducto(){
+
     this.contadorProductos++;
     const idProducto: Number = Number(this.formDetalle.controls.producto.value.toString());
     const cantidadProducto: number = Number.parseInt(this.formDetalle.controls.cantidad.value.toString());
-    const precioCompra: any = Number(this.formDetalle.controls.total.value.toString());
+    const precioCompra: any = Number(this.formDetalle.controls.total.value.toString()) * cantidadProducto;
 
     const producto: Producto = this.lstProductos.find(x => x.id === idProducto) as Producto;
 
     const factura: any = null;
 
+    let stock: any = null;
+    const urlFields: UrlField[] = [{
+      fieldName: 'idProducto',
+      value: idProducto.toString()
+    }];
+    this.formDetalle.controls.producto.disable();
+    this.formDetalle.controls.cantidad.disable();
+    await this.service.getItemsFromEntityByFieldsPromise('stock', 'getByProducto', urlFields).then(res =>{
+      stock = res;
+    }).catch(error => {
+      console.error(error);
+    });
+
+    if (stock) {
+      stock.cantidad = stock.cantidad - Number(this.formDetalle.controls.cantidad.value);
+      if (stock.cantidad < 0){
+        this.errorStock = true;
+        setTimeout(() => {
+          this.errorStock = false;
+          const obj = {
+            value: idProducto
+          };
+          this.cargarDatosProducto(obj);
+        } , 2000);
+        return;
+      }
+      else if (stock.cantidad === 0) {
+        await this.service.deleteEntity('stock', stock.id).subscribe(res => {
+        }, error =>{
+          console.error(error);
+        });
+      } else {
+        await this.service.saveEntityPromise('stock', stock).then(res => {
+        }).catch(error =>{
+          console.error(error);
+        });
+      }
+    }
+
     const detalle = new DetalleFactura(0, factura, producto.codigo, producto.nombre, cantidadProducto, precioCompra);
     detalle.idTemporal = this.contadorProductos;
 
-
     this.lstDetalle = [...this.lstDetalle, detalle];
-
-    this.formDetalle = new FormGroup({
-      id: new FormControl(''),
-      producto: new FormControl('', Validators.required),
-      cantidad: new FormControl('', Validators.required),
-      total: new FormControl('', Validators.required)
-    })
 
     const valorTotalFactura = Number(this.form.controls.total.value) + precioCompra;
 
     this.form.controls.total.setValue(valorTotalFactura);
 
+    this.formDetalle.controls.producto.enable();
+    this.formDetalle.controls.cantidad.enable();
+
+    this.formDetalle = new FormGroup({
+      id: new FormControl(''),
+      producto: new FormControl('', Validators.required),
+      cantidad: new FormControl('', Validators.required),
+      total: new FormControl({ value: '', disabled: true }, Validators.required)
+    });
+
+    this.cantidadComboProructos = [];
   }
 
   eliminarDetalle(item: any){
@@ -520,6 +552,12 @@ export class VentaComponent implements OnInit {
         this.lstDetalle = [... this.lstDetalle, obj];
       }
     }
+
+    this.formDetalle.controls.producto.setValue('');
+    this.formDetalle.controls.cantidad.setValue('');
+    this.cantidadComboProructos = [];
+
+    this.revertirStockItem(item);
   }
 
   async getCierre(){
@@ -538,9 +576,140 @@ export class VentaComponent implements OnInit {
           this.mostrarAgregar = true;
         }
       }
-    }).then(error1 => {
+    }).catch(error1 => {
       console.error(error1);
     });
   }
+
+  async cargarDatosProducto(value: any) {
+    this.formDetalle.controls.producto.disable();
+
+    const urlFields: UrlField[] = [{
+      fieldName: 'id',
+      value: value.value
+    }];
+
+    this.cantidadComboProructos = [];
+    await this.service.getItemsFromEntityByFieldsPromise('producto', 'getById', urlFields).then( (res: any) => {
+
+      this.formDetalle.controls.total.setValue(res ? this.decimalPipe.transform(res.precio, '1.2-2'): '');
+      this.formDetalle.controls.cantidad.setValue('');
+
+      this.cantidadComboProructos = [0];
+      this.errorStock = true;
+      if (res && res.cantidadStock){
+        this.errorStock = false;
+        this.cantidadComboProructos = [];
+        for (let i = 0; i < res.cantidadStock; i++) {
+          this.cantidadComboProructos = [...this.cantidadComboProructos, i+1];
+        }
+      }
+      setTimeout(() => {
+        this.errorStock = false;
+        } , 2000);
+
+      this.formDetalle.controls.producto.enable();
+      this.formDetalle.controls.cantidad.enable();
+    }).catch(error => {
+      this.formDetalle.controls.producto.enable();
+      this.formDetalle.controls.cantidad.enable();
+      console.error(error)
+    });
+  }
+
+  async revertirStock(){
+    if(this.lstDetalle && this.lstDetalle.length > 0) {
+      for (const obj of this.lstDetalle) {
+
+        let producto: any = null;
+
+        const urlFieldsP: UrlField[] = [{
+          fieldName: 'codigo',
+          value: obj.productoCodigo
+        }];
+
+        await this.service.getItemsFromEntityByFieldsPromise('producto', 'getByCodigo', urlFieldsP).then(res =>{
+          producto = res;
+        }).catch(error => {
+          console.error(error);
+        });
+
+        let stock: any = null;
+
+        const urlFields: UrlField[] = [{
+          fieldName: 'idProducto',
+          value: producto ? producto.id : null
+        }];
+        await this.service.getItemsFromEntityByFieldsPromise('stock', 'getByProducto', urlFields).then(res =>{
+          stock = res;
+        }).catch(error => {
+          console.error(error);
+        });
+
+        if (stock) {
+          stock.cantidad = stock.cantidad + obj.cantidad;
+        } else {
+          stock = {
+            id: '',
+            producto: producto,
+            cantidad: 0
+          };
+          stock.cantidad = stock.cantidad + obj.cantidad;
+        }
+
+        await this.service.saveEntityPromise('stock', stock).then(res => {
+        }).catch(error =>{
+          console.error(error);
+        });
+
+
+      }
+    }
+
+  }
+
+  async revertirStockItem(item: any){
+    let producto: any = null;
+
+    const urlFieldsP: UrlField[] = [{
+      fieldName: 'codigo',
+      value: item.productoCodigo
+    }];
+
+    await this.service.getItemsFromEntityByFieldsPromise('producto', 'getByCodigo', urlFieldsP).then(res =>{
+      producto = res;
+    }).catch(error => {
+      console.error(error);
+    });
+
+    let stock: any = null;
+
+    const urlFields: UrlField[] = [{
+      fieldName: 'idProducto',
+      value: producto ? producto.id : null
+    }];
+    await this.service.getItemsFromEntityByFieldsPromise('stock', 'getByProducto', urlFields).then(res =>{
+      stock = res;
+    }).catch(error => {
+      console.error(error);
+    });
+
+    if (stock) {
+      stock.cantidad = stock.cantidad + item.cantidad;
+    } else {
+      stock = {
+        id: '',
+        producto: producto,
+        cantidad: 0
+      };
+      stock.cantidad = stock.cantidad + item.cantidad;
+    }
+
+    await this.service.saveEntityPromise('stock', stock).then(res => {
+    }).catch(error =>{
+      console.error(error);
+    });
+  }
+
 
 }

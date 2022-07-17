@@ -177,7 +177,6 @@ export class CompraComponent implements OnInit {
     this.modalCrud._windowCmptRef.hostView.rootNodes[0].scrollTop = 0;
     this.service.getFromEntityAndMethodString('factura', 'getValidadorUniques', request).subscribe(
       res => {
-        console.log('res: ', res);
         if (!res) {
           if (this.modo === 1){
             if (this.form && this.form.valid){
@@ -549,7 +548,7 @@ export class CompraComponent implements OnInit {
           this.mostrarAgregar = true;
         }
       }
-    }).then(error1 => {
+    }).catch(error1 => {
       console.error(error1);
     });
   }

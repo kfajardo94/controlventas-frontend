@@ -394,7 +394,6 @@ export class ProductosComponent implements OnInit {
           image.onload = async (a) => {
             const height = image.height;
             const width = image.width;
-            console.log('height: ', height, ' - ', width);
             if (height > 1000 || width > 1000) {
               this.type = 'danger';
               this.mensajeImagen = 'La imagen debe tener un tamaño máximo de 1000 x 1000';

@@ -44,10 +44,13 @@ export class AppComponent {
     const saldoCierre = Number(this.form.controls.saldoCierre.value.replaceAll(',', '')) + Number(this.form.controls.saldoAnterior.value.replaceAll(',', ''));
     const fechaCierre = new Date();
     fechaCierre.setHours(fechaCierre.getHours()-6);
-
+    const fechaActual = new Date();
+    fechaActual.setHours(0);
+    fechaActual.setMinutes(0);
+    fechaActual.setSeconds(0);
     const obj = {
       id: '',
-      fecha: new Date(),
+      fecha: fechaActual,
       saldoAnterior: saldoAnterior,
       saldoCierre: saldoCierre,
       fechaHoraCierre: fechaCierre
@@ -85,7 +88,7 @@ export class AppComponent {
           return;
         }
       }
-    }).then(error1 => {
+    }).catch(error1 => {
       console.error(error1);
     });
 
@@ -110,7 +113,7 @@ export class AppComponent {
     let response:[] = [];
     await this.service.getFromEntityAndMethodPromise('factura', 'getTotales', obj).then( res =>{
       response = res;
-    }).then(error1 => {
+    }).catch(error1 => {
       console.error(error1);
     });
 
@@ -155,7 +158,7 @@ export class AppComponent {
       let responseHoy:[] = [];
       await this.service.getFromEntityAndMethodPromise('factura', 'getTotales', objHoy).then( res =>{
         responseHoy = res;
-      }).then(error1 => {
+      }).catch(error1 => {
         console.error(error1);
       });
 

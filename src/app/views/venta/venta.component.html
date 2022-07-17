@@ -127,55 +127,69 @@
   <form [formGroup]="form" (submit)="guardar()">
     <div class="modal-body">
       <div class="form-group">
-        <div *ngIf="this.modo !== 1">
-          <label>Id</label>
-          <div class="input-group" >
+        <div class="input-group" *ngIf="this.modo !== 1">
+          <div class="col-12" >
+            <label>Id</label>
             <input type="text" class="form-control" maxlength="10" formControlName="id" >
           </div>
         </div>
 
-        <label>{{(this.modo === 1 || modo === 2) ? 'Código' + '*' : 'Código' }}</label>
         <div class="input-group" >
-          <input id="inputCodigo" type="text" class="form-control" formControlName="codigo" (blur)="limpiarControls('codigo', form)" maxlength="50">
+          <div class="col-12">
+            <label>{{(this.modo === 1 || modo === 2) ? 'Código' + '*' : 'Código' }}</label>
+            <input #inputCodigo id="inputCodigo" type="text" class="form-control" formControlName="codigo" (blur)="limpiarControls('codigo', form)" maxlength="50">
+            <label *ngIf="this.modo === 1" class="small float-right">{{inputCodigo.value.length}}/{{inputCodigo.maxLength}}</label>
+          </div>
         </div>
 
-        <label>{{(this.modo === 1 || modo === 2) ? 'Descripción' + '*' : 'Descripción'}}</label>
         <div class="input-group" >
-          <textarea rows="4" type="text" class="form-control" maxlength="300" formControlName="descripcion" (blur)="limpiarControls('descripcion', form)"></textarea>
+          <div class="col-12">
+            <label>{{(this.modo === 1 || modo === 2) ? 'Descripción' + '*' : 'Descripción'}}</label>
+            <textarea #inputDescripcion rows="4" type="text" class="form-control" maxlength="300" formControlName="descripcion" (blur)="limpiarControls('descripcion', form)"></textarea>
+            <label *ngIf="this.modo === 1" class="small float-right">{{inputDescripcion.value.length}}/{{inputDescripcion.maxLength}}</label>
+          </div>
         </div>
 
-        <label>{{(this.modo === 1 || modo === 2) ? 'Total' + '*' : 'Total' }}</label>
-        <div class="input-group" >
-          <input *ngIf="modo !== 3" type="text" class="form-control input-normal-disabled" formControlName="total" >
-          <input *ngIf="modo === 3" type="text" class="form-control" formControlName="total" >
+        <div class="input-group " >
+          <div class="col-12 ">
+            <label>{{(this.modo === 1 || modo === 2) ? 'Total' + '*' : 'Total' }}</label>
+            <input *ngIf="modo !== 3" type="text" class="form-control input-normal-disabled" formControlName="total" >
+            <input *ngIf="modo === 3" type="text" class="form-control" formControlName="total" >
+          </div>
         </div>
 
         <br>
-        <div *ngIf="modo==1" class="dropdown-divider">
-        </div>
+        <div *ngIf="modo==1" class="dropdown-divider"></div>
 
         <label class="font-weight-bold">{{'Detalle' }}</label>
         <div *ngIf="modo === 1"  class="dropdown-divider">
         </div>
 
         <form *ngIf="modo === 1" [formGroup]="formDetalle" (submit)="guardar()">
-          <label>{{(this.modo === 1 || modo === 2) ? 'Producto' + '*' : 'Producto' }}</label>
+          <ngb-alert type="danger" *ngIf="errorStock" [dismissible]="false">No existe disponibilidad del producto seleccionado</ngb-alert>
           <div class="input-group" >
-            <select class="form-control" aria-label="Default select example" formControlName="producto">
-              <option *ngFor="let producto of lstProductos" [value]="producto.id" >{{producto.nombre}}</option>
-            </select>
-          </div>
-          <label>{{(this.modo === 1 || modo === 2) ? 'Cantidad' + '*' : 'Cantidad' }}</label>
-          <div class="input-group" >
-            <input type="text" class="form-control" formControlName="cantidad" (blur)="removeLetters('cantidad', 10, formDetalle)">
-          </div>
-          <label>{{(this.modo === 1 || modo === 2) ? 'Precio' + '*' : 'Precio' }}</label>
-          <div  class="input-group" >
-            <input type="text" class="form-control" formControlName="total" (blur)="removeLettersDecimals('total', 10, 2, formDetalle)" >
+            <div class="col-4">
+              <label>{{(this.modo === 1 || modo === 2) ? 'Producto' + '*' : 'Producto' }}</label>
+              <select class="form-control" aria-label="Default select example" formControlName="producto" (change)="cargarDatosProducto($event.target)">
+                <option *ngFor="let producto of lstProductos" [value]="producto.id" >{{producto.nombre}}</option>
+              </select>
+              <br>
+            </div>
+            <div class="col-4">
+              <label>{{(this.modo === 1 || modo === 2) ? 'Cantidad' + '*' : 'Cantidad' }}</label>
+              <select class="form-control" aria-label="Default select example" formControlName="cantidad" >
+                <option *ngFor="let cantidad of cantidadComboProructos" [value]="cantidad" >{{cantidad}}</option>
+              </select>
+            </div>
+            <div class="col-4">
+              <label>{{(this.modo === 1 || modo === 2) ? 'Precio' + '*' : 'Precio' }}</label>
+              <input type="text" class="form-control input-normal-disabled" formControlName="total"  (blur)="removeLettersDecimals('total', 10, 2, formDetalle)" >
+            </div>
           </div>
         </form>
         <br *ngIf="modo === 1">
-        <button class="btn btn-sm btn-success float-right" *ngIf="modo === 1" (click)="agregarProducto()" [disabled]="this.formDetalle.invalid" ><i class="fas fa-plus"></i></button>
+        <button class="btn btn-sm btn-success float-right" *ngIf="modo === 1" (click)="agregarProducto()" [disabled]="this.formDetalle.invalid || !this.formDetalle.controls.total.value || errorStock
+                                                                                                        || !this.formDetalle.controls.cantidad.value || this.formDetalle.controls.cantidad.value === '0'" ><i class="fas fa-plus"></i></button>
         <div class="divTableCustom">
           <table class="table table-striped">
             <thead>
