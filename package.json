@@ -34,6 +34,7 @@
     "bootstrap": "^4.5.3",
     "bootstrap-icons": "^1.2.1",
     "build": "^0.1.4",
+    "express": "^4.17.1",
     "ng": "0.0.0",
     "path": "^0.12.7",
     "rxjs": "~6.6.0",
