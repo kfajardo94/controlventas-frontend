@@ -12,6 +12,7 @@
   },
   "private": true,
   "dependencies": {
+    "@akabane1994/login-generico-lib": "^0.0.2",
     "@angular/animations": "^11.0.5",
     "@angular/cdk": "^11.0.3",
     "@angular/cli": "~11.0.5",
@@ -35,6 +36,7 @@
     "bootstrap-icons": "^1.2.1",
     "build": "^0.1.4",
     "express": "^4.17.1",
+    "latest": "^0.2.0",
     "ng": "0.0.0",
     "path": "^0.12.7",
     "rxjs": "~6.6.0",

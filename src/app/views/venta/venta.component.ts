@@ -282,12 +282,17 @@ export class VentaComponent implements OnInit {
   }
 
   llenarObjeto(form: any): any{
+    const fechaActual = new Date();
+    fechaActual.setHours(0);
+    fechaActual.setMinutes(0);
+    fechaActual.setSeconds(0);
+    fechaActual.setMilliseconds(0);
     const obj = {
       id: form.controls.id.value.toString().trim(),
       codigo: form.controls.codigo.value,
       tipo: 'V',
       descripcion: form.controls.descripcion.value,
-      fecha: new Date(),
+      fecha: fechaActual,
       total: form.controls.total.value
     };
 

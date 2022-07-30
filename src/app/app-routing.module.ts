@@ -6,6 +6,7 @@ import {TipoProductoComponent} from './views/tipo-producto/tipo-producto.compone
 import {CompraComponent} from './views/compra/compra.component';
 import {VentaComponent} from './views/venta/venta.component';
 import {ReportesComponent} from './views/reportes/reportes.component';
+import {LoginComponent} from '@akabane1994/login-generico-lib/lib/login/login.component';
 
 const routes: Routes = [
   {path: '', component: HomeComponent},
@@ -13,7 +14,8 @@ const routes: Routes = [
   {path: 'tipo-producto', component: TipoProductoComponent},
   {path: 'compra', component: CompraComponent},
   {path: 'venta', component: VentaComponent},
-  {path: 'reporte', component: ReportesComponent}
+  {path: 'reporte', component: ReportesComponent},
+  {path: 'login', component: LoginComponent}
 ];
 
 @NgModule({

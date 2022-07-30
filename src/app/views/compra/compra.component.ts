@@ -173,6 +173,7 @@ export class CompraComponent implements OnInit {
             if (this.form && this.form.valid){
 
               const obj = this.llenarObjeto(this.form);
+              console.log('obj: ', obj);
               this.service.saveEntityPromise('factura', obj).then(res => {
                 this.type = 'success';
                 this.mensaje = 'Registro creado';
@@ -294,12 +295,17 @@ export class CompraComponent implements OnInit {
   // }
 
   llenarObjeto(form: any): any{
+    const fechaActual = new Date();
+    fechaActual.setHours(0);
+    fechaActual.setMinutes(0);
+    fechaActual.setSeconds(0);
+    fechaActual.setMilliseconds(0);
     const obj = {
       id: form.controls.id.value.toString().trim(),
       codigo: form.controls.codigo.value,
       tipo: 'C',
       descripcion: form.controls.descripcion.value,
-      fecha: new Date(),
+      fecha: fechaActual,
       total: form.controls.total.value
     };
 

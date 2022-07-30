@@ -16,6 +16,10 @@ import {DatePipe, DecimalPipe} from '@angular/common';
 import { CompraComponent } from './views/compra/compra.component';
 import { VentaComponent } from './views/venta/venta.component';
 import { ReportesComponent } from './views/reportes/reportes.component';
+import {LoginComponent} from '@akabane1994/login-generico-lib/lib/login/login.component';
+import {LoginGenericoLibModule} from '@akabane1994/login-generico-lib';
+import {SigninComponent} from '@akabane1994/login-generico-lib/lib/signin/signin.component';
+import {RecuperarContraseniaComponent} from '@akabane1994/login-generico-lib/lib/recuperar-contrasenia/recuperar-contrasenia.component';
 
 @NgModule({
   declarations: [
@@ -27,7 +31,10 @@ import { ReportesComponent } from './views/reportes/reportes.component';
     TipoProductoComponent,
     CompraComponent,
     VentaComponent,
-    ReportesComponent
+    ReportesComponent,
+    LoginComponent,
+    SigninComponent,
+    RecuperarContraseniaComponent
   ],
   imports: [
     BrowserModule,

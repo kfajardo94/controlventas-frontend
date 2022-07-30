@@ -9,10 +9,10 @@ import {Observable} from 'rxjs';
 export class Services {
 
   // local
-  // URL = 'http://192.168.0.155:8081';
+  URL = 'http://192.168.0.155:8081';
 
   // demo heroku
-  URL = 'https://controlventas-backend-demo.herokuapp.com';
+  // URL = 'https://controlventas-backend-demo.herokuapp.com';
 
   constructor(private http: HttpClient) {
 
